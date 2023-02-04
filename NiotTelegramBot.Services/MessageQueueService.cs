@@ -23,7 +23,7 @@ public class MessageQueueService : IMessageQueueService
     }
 
     #endregion
-        
+
     #region OutgoingEnqueue
 
     public void OutgoingEnqueue(OutgoingMessage message)
@@ -34,10 +34,15 @@ public class MessageQueueService : IMessageQueueService
     public void OutgoingEnqueue(List<OutgoingMessage> messagesList)
     {
         var count = _IncomingQueue.Count;
-        if (count % 5 == 0)
+        if (count > 0 && count % 5 == 0)
         {
             Log.LogWarning("Incoming message queue is expanding! Count: {Count}", count);
         }
+        else
+        {
+            Log.LogDebug("Incoming message queue count: {Count}", count);
+        }
+
         foreach (var message in messagesList)
         {
             _IncomingQueue.Enqueue(message);
@@ -61,10 +66,15 @@ public class MessageQueueService : IMessageQueueService
     public void ProcessEnqueue(MessageProcess message)
     {
         var count = _ProcessQueue.Count;
-        if (count % 5 == 0)
+        if (count > 0 && count % 5 == 0)
         {
             Log.LogWarning("Process queue is expanding! Count: {Count}", count);
         }
+        else
+        {
+            Log.LogDebug("Process queue count: {Count}", count);
+        }
+
         _ProcessQueue.Enqueue(message);
     }
 

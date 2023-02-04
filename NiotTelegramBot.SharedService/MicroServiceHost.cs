@@ -26,6 +26,7 @@ public static class MicroServiceHost
             {
                 return _BuildNumber;
             }
+
             _BuildNumber = Environment.GetEnvironmentVariable("ASPNETCORE_BUILD_NUMBER") ?? "unknown";
             if (_BuildNumber.StartsWith(':'))
             {
@@ -57,13 +58,14 @@ public static class MicroServiceHost
             {
                 return _MicroServiceName;
             }
+
             var name = Assembly.GetCallingAssembly().GetName();
             _MicroServiceName = name.Name ?? string.Empty;
 
             return _MicroServiceName;
         }
     }
-    
+
     /// <summary>
     /// Gets the current root path using the specified is service
     /// </summary>
@@ -92,7 +94,7 @@ public static class MicroServiceHost
 
         return _PathToContentRoot;
     }
-    
+
     /// <summary>
     /// Create the console host using the specified args
     /// CreateDefaultBuilder with provided arguments
@@ -102,9 +104,11 @@ public static class MicroServiceHost
     /// Call method ConfigureServices with delegate
     /// </summary>
     /// <param name="configureDelegate">The configure delegate</param>
+    /// <param name="pathAppSettings"></param>
     /// <param name="args">The args. Can be empty or null</param>
     public static IHostBuilder CreateConsoleHost(
         Action<HostBuilderContext, IServiceCollection> configureDelegate,
+        string pathAppSettings = "",
         string[]? args = null)
     {
         args ??= Array.Empty<string>();
@@ -113,7 +117,11 @@ public static class MicroServiceHost
                                               {
                                                   // Config file doesn't working in Docker without this settings
                                                   config.SetBasePath(GetCurrentRootPath());
-                                                  config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+                                                  config.AddJsonFile(string.IsNullOrEmpty(pathAppSettings) ?
+                                                                         "appsettings.json" :
+                                                                         pathAppSettings,
+                                                                     optional: false,
+                                                                     reloadOnChange: false);
                                                   config.AddEnvironmentVariables();
                                               }
                                              )

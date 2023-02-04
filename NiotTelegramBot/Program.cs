@@ -25,11 +25,17 @@ internal static class Program
             File.Copy(Path.Combine(MicroServiceHost.GetCurrentRootPath(), "NLog.config"), pathNlogConfig);
         }
 
+        var pathAppSettings = Path.Combine(MicroServiceHost.GetCurrentRootPath(), "data", "config", "appsettings.json");
+        if (!File.Exists(pathAppSettings))
+        {
+            File.Copy(Path.Combine(MicroServiceHost.GetCurrentRootPath(),  "appsettings.json"), pathAppSettings);
+        }
+
         var log = LogManager.LoadConfiguration(pathNlogConfig).GetCurrentClassLogger();
         try
         {
             log.LogInitMessage(MicroServiceHost.MicroServiceName);
-            await MicroServiceHost.CreateConsoleHost(ConfigureServices, args).RunConsoleAsync();
+            await MicroServiceHost.CreateConsoleHost(ConfigureServices, pathAppSettings, args).RunConsoleAsync();
         }
         catch (Exception exp)
         {

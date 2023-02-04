@@ -435,7 +435,10 @@ public class BotService : BackgroundService
         {
             _IsDisposed = true;
             Log.LogInformation("Dispose");
-            _SendTask.Wait();
+            if (_SendTask.Status == TaskStatus.Running)
+            {
+                _SendTask.Wait();
+            }
         }
 
         base.Dispose();

@@ -64,10 +64,32 @@ public class PluginManagerService : BackgroundService
         {
             Log.LogWarning("Input plugin list is empty!");
         }
+        else
+        {
+            var str = new StringBuilder();
+            foreach (var item in configPluginOutgoingInput)
+            {
+                str.AppendLine($"Name: {item.Name}, Enable: {item.Enabled}");
+            }
+
+            Log.LogInformation("Plugin List:\n{List}",
+                               str.ToString());
+        }
 
         if (configPluginDataSource.Value.List.Count == 0)
         {
             Log.LogWarning("Plugin DataSource list is empty!");
+        }
+        else
+        {
+            var str = new StringBuilder();
+            foreach (var item in configPluginDataSource.Value.List)
+            {
+                str.AppendLine($"Name: {item}, Enable: {item.Enabled}");
+            }
+
+            Log.LogInformation("DataSource List:\n{List}",
+                               str.ToString());
         }
 
         _PluginDataSource = InitDataSources(loggerFactory, configPluginDataSource, _Cts.Token);
@@ -201,7 +223,7 @@ public class PluginManagerService : BackgroundService
         constructorTypes[5] = typeof(IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings>);
         constructorTypes[6] = typeof(CancellationToken);
 
-        var type = Type.GetType(nameof(Plugins) + "." + settings.Name, false, true);
+        var type = Type.GetType("NiotTelegramBot.Plugins.Processor." + settings.Name, false, true);
         if (type == null)
         {
             Log.LogError("Invalid Processor name: {Name}",
@@ -553,8 +575,15 @@ public class PluginManagerService : BackgroundService
             }
         }
 
-        _ProcessTask.Wait();
-        _TickTask.Wait();
+        if (_ProcessTask.Status == TaskStatus.Running)
+        {
+            _ProcessTask.Wait();
+        }
+
+        if (_ProcessTask.Status == TaskStatus.Running)
+        {
+            _TickTask.Wait();
+        }
 
         base.Dispose();
     }

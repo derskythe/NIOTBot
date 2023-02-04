@@ -101,7 +101,7 @@ public sealed class ConsoleHostedService : IHostedService
     private void OnStopping(CancellationToken cancellationToken)
     {
         Log.LogInformation("SIGTERM received, waiting for 10 seconds");
-        Thread.Sleep(10_000);
+        Thread.Sleep(2_000);
         Log.LogInformation("Termination delay complete, continuing stopping process");
     }
 
