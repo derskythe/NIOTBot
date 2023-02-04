@@ -1,9 +1,8 @@
-﻿using EnumsNET;
-using Microsoft.Extensions.Logging;
-using ModelzAndUtils;
-using ModelzAndUtils.Enums;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Models;
+﻿using Microsoft.Extensions.Logging;
+using NiotTelegramBot.ModelzAndUtils;
+using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Models;
 
 // ReSharper disable UnusedMember.Local
 

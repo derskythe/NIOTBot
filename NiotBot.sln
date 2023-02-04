@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedService", "SharedService\SharedService.csproj", "{85E691CA-8D70-4640-A7EF-71A5A096D362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NiotTelegramBot.SharedService", "NiotTelegramBot.SharedService\NiotTelegramBot.SharedService.csproj", "{85E691CA-8D70-4640-A7EF-71A5A096D362}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelzAndUtils", "ModelzAndUtils\ModelzAndUtils.csproj", "{F45E8B2A-86FF-458F-A70A-F2D8A6984A6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NiotTelegramBot.ModelzAndUtils", "NiotTelegramBot.ModelzAndUtils\NiotTelegramBot.ModelzAndUtils.csproj", "{F45E8B2A-86FF-458F-A70A-F2D8A6984A6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiotTelegramBot", "NiotTelegramBot\NiotTelegramBot.csproj", "{48D8E60A-E601-4CC6-AB97-329FF196C78D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins", "Plugins\Plugins.csproj", "{FBB687C5-8C86-4642-8C7F-2EB88070EC66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiotTelegramBot.Plugins", "NiotTelegramBot.Plugins\NiotTelegramBot.Plugins.csproj", "{FBB687C5-8C86-4642-8C7F-2EB88070EC66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiotTelegramBot.Services", "NiotTelegramBot.Services\NiotTelegramBot.Services.csproj", "{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}"
 EndProject

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModelzAndUtils.Enums;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Models;
+using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Models;
 
 namespace NiotTelegramBot.Services;
 

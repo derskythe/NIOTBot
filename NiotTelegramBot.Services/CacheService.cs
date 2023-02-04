@@ -2,9 +2,9 @@
 using EnumsNET;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using ModelzAndUtils.Enums;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Models;
+using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Models;
 
 // ReSharper disable MemberCanBePrivate.Global
 

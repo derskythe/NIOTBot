@@ -3,14 +3,13 @@ using EnumsNET;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ModelzAndUtils;
-using ModelzAndUtils.Enums;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Models;
-using ModelzAndUtils.Settings;
-using Plugins.Processor;
+using NiotTelegramBot.ModelzAndUtils;
+using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Models;
+using NiotTelegramBot.ModelzAndUtils.Settings;
+using NiotTelegramBot.Plugins.Processor;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace NiotTelegramBot.Services;
 

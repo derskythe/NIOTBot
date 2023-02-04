@@ -1,19 +1,18 @@
 ﻿using EnumsNET;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModelzAndUtils;
-using ModelzAndUtils.Enums;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Models;
-using Plugins;
+using NiotTelegramBot.ModelzAndUtils;
+using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Models;
+using NiotTelegramBot.Plugins;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Emoji = ModelzAndUtils.Enums.Emoji;
+using Emoji = NiotTelegramBot.ModelzAndUtils.Enums.Emoji;
 
 namespace NiotTelegramBot.Services;
 

@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModelzAndUtils\ModelzAndUtils.csproj" />
+    <ProjectReference Include="..\NiotTelegramBot.ModelzAndUtils\NiotTelegramBot.ModelzAndUtils.csproj" />
     <ProjectReference Include="..\NiotTelegramBot.Services\NiotTelegramBot.Services.csproj" />
-    <ProjectReference Include="..\Plugins\Plugins.csproj" />
-    <ProjectReference Include="..\SharedService\SharedService.csproj" />
+    <ProjectReference Include="..\NiotTelegramBot.Plugins\NiotTelegramBot.Plugins.csproj" />
+    <ProjectReference Include="..\NiotTelegramBot.SharedService\NiotTelegramBot.SharedService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

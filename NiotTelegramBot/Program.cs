@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ModelzAndUtils.Interfaces;
-using ModelzAndUtils.Settings;
+using NiotTelegramBot.ModelzAndUtils.Interfaces;
+using NiotTelegramBot.ModelzAndUtils.Settings;
 using NiotTelegramBot.Services;
+using NiotTelegramBot.SharedService;
 using NLog;
-using SharedService;
 using Telegram.Bot;
 
 namespace NiotTelegramBot;
