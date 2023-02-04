@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="ErrorCantProcessMessage" xml:space="preserve">
+        <value>Sorry, can't process such type of message</value>
+    </data>
+    <data name="ErrorInvalidMessage" xml:space="preserve">
+        <value>Invalid message received</value>
+    </data>
+    <data name="InfoReceivedMessage" xml:space="preserve">
+        <value>Received message: </value>
+    </data>
+    <data name="ErrorRuntime" xml:space="preserve">
+        <value>Runtime error occured: </value>
+    </data>
+    <data name="InfoBotStatusChanged" xml:space="preserve">
+        <value>Bot status changed: </value>
+    </data>
+    <data name="InfoUserAudit" xml:space="preserve">
+        <value>User audit message</value>
+    </data>
+    <data name="EchoProcessor" xml:space="preserve">
+        <value>EchoProcessor</value>
+    </data>
+    <data name="RuntimeErrorProcessor" xml:space="preserve">
+        <value>RuntimeErrorProcessor</value>
+    </data>
+    <data name="AbstractMessageTypeProcessor" xml:space="preserve">
+        <value>AbstractMessageTypeProcessor</value>
+    </data>
+    <data name="StartStopInfoProcessor" xml:space="preserve">
+        <value>StartStopInfoProcessor</value>
+    </data>
+    <data name="UserAuditProcessor" xml:space="preserve">
+        <value>UserAuditProcessor</value>
+    </data>
+    <data name="DummyProcessor" xml:space="preserve">
+        <value>DummyProcessor</value>
+    </data>
+    <data name="FileProcessor" xml:space="preserve">
+        <value>FileProcessor</value>
+    </data>
+    <data name="OrphainedMessagesProcessor" xml:space="preserve">
+        <value>OrphainedMessagesProcessor</value>
+    </data>
+    <data name="MessageReceived" xml:space="preserve">
+        <value>Message received:</value>
+    </data>
+    <data name="MessageSelectMenu" xml:space="preserve">
+        <value>Please select menu</value>
+    </data>
+    <data name="MessageNotAuth" xml:space="preserve">
+        <value>You are not authorized user for me</value>
+    </data>
+    <data name="Warning" xml:space="preserve">
+        <value>Warning</value>
+    </data>
+    <data name="Error" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="MessageChatUserListEmpty" xml:space="preserve">
+        <value>Warning! Chat user list is empty, I can't process messages from any user. Please follow setup instructions</value>
+    </data>
+    <data name="ErrorUserNotAuthorized" xml:space="preserve">
+        <value>I don't know you, sorry</value>
+    </data>
+</root>

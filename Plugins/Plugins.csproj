@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ModelzAndUtils\ModelzAndUtils.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Input" />
+      <Folder Include="Models" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="InfluxDB.Client" Version="4.10.0" />
+      <PackageReference Include="InfluxDB.Client.Flux" Version="4.10.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="i18n.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>i18n.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="i18n.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>i18n.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Processor\Abstract\RuntimeErrorProcessor.cs">
+        <DependentUpon>AbstractMessageTypeProcessor.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Processor\Abstract\StartStopInfoProcessor.cs">
+        <DependentUpon>AbstractMessageTypeProcessor.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Processor\Abstract\UserAuditProcessor.cs">
+        <DependentUpon>AbstractMessageTypeProcessor.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Processor\FileProcessor.FileProcessorSettings.cs">
+        <DependentUpon>FileProcessor.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>
