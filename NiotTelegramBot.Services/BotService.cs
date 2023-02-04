@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EnumsNET;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using ModelzAndUtils;
 using ModelzAndUtils.Enums;
 using ModelzAndUtils.Interfaces;
 using ModelzAndUtils.Models;
@@ -74,16 +78,34 @@ public class BotService : BackgroundService
     }
 
     #region ProcessMessage
-    private async Task SendAsync(CancellationToken stoppingToken)
+
+    private async Task SendAsync(CancellationToken cancellationToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             var message = _MessageQueue.OutgoingDequeue();
             if (message != null)
             {
                 try
                 {
-                    await ProcessMessage(message, stoppingToken);
+                    switch (message.Type)
+                    {
+                        case OutgoingMessageType.Text:
+                            await SendTextMessage(message, cancellationToken);
+                            break;
+                        case OutgoingMessageType.Typing:
+                            await SendTyping(message, cancellationToken);
+                            break;
+                        case OutgoingMessageType.Attachment:
+                            await SendAttachment(message, cancellationToken);
+                            break;
+                        case OutgoingMessageType.None:
+                        case OutgoingMessageType.EndTyping:
+                        default:
+                            Log.LogWarning("Invalid message type: {Type}, ignoring",
+                                           message.Type.AsString());
+                            break;
+                    }
                 }
                 catch (TaskCanceledException exp)
                 {
@@ -98,90 +120,140 @@ public class BotService : BackgroundService
                 }
             }
 
-            await Task.Delay(_TimeoutDelaySend, stoppingToken);
+            await Task.Delay(_TimeoutDelaySend, cancellationToken);
         }
     }
 
-    private async Task ProcessMessage(OutgoingMessage message, CancellationToken cancellationToken)
+    #endregion
+
+    private async Task SendTyping(OutgoingMessage message, CancellationToken cancellationToken)
     {
-        var keyboardMarkup = KeyboardMarkup(message);
-
-        switch (message.Type)
+        var chatId = message.ChatId;
+        IReadOnlyList<TelegramUser> userList;
+        if (message.DirectMessage)
         {
-            case OutgoingMessageType.Text when message.DirectMessage:
-                await SendTextMessage(message.ChatId,
-                                      message.Message,
-                                      keyboardMarkup,
-                                      cancellationToken);
-                break;
+            userList = new[] { _ChatUsers.GetByChatId(message.ChatId) };
+        }
+        else
+        {
+            userList = _ChatUsers.ListUsersByPermission(message.AllowedReceivers);
+        }
 
-            case OutgoingMessageType.Text:
-                foreach (var users in _ChatUsers.ListUsersByPermission(message.AllowedReceivers))
-                {
-                    await SendTextMessage(users.ChatId,
-                                          message.Message,
-                                          keyboardMarkup,
-                                          cancellationToken);
-                }
-
-                break;
-            case OutgoingMessageType.Typing:
-                await _Bot.SendChatActionAsync(message.ChatId,
+        foreach (var user in userList)
+        {
+            try
+            {
+                await _Bot.SendChatActionAsync(user.ChatId,
                                                ChatAction.Typing,
                                                cancellationToken: cancellationToken);
-                break;
-            case OutgoingMessageType.Attachment when message.DirectMessage:
-                // TODO: Convert to memory stream
-                break;
-            case OutgoingMessageType.Attachment:
-                // TODO: Convert to memory stream
-                break;
-            case OutgoingMessageType.None:
-            case OutgoingMessageType.EndTyping:
-            default:
-                Log.LogWarning("Invalid message type: {Type}, ignoring",
-                               message.Type.AsString());
-                break;
+            }
+            catch (Exception exp)
+            {
+                Log.LogError(exp,
+                             "Send message failed. Text: {Text}, Username: {Username}({ChatId}), Error: {Message}",
+                             message.Text,
+                             user.Username,
+                             user.ChatId,
+                             exp.Message);
+            }
         }
     }
-    
-    #endregion    
 
-    private async Task SendTextMessage(long chatId, string text, IReplyMarkup? keyboardMarkup, CancellationToken cancellationToken)
+    private async Task SendTextMessage(OutgoingMessage message, CancellationToken cancellationToken)
     {
-        try
+        var keyboardMarkup = KeyboardMarkup(message);
+        var chatId = message.ChatId;
+        IReadOnlyList<TelegramUser> userList;
+        if (message.DirectMessage)
         {
-            await _Bot.SendTextMessageAsync(chatId,
-                                            text,
-                                            ParseMode.MarkdownV2,
-                                            replyMarkup: keyboardMarkup,
-                                            cancellationToken: cancellationToken);
+            userList = new[] { _ChatUsers.GetByChatId(message.ChatId) };
         }
-        catch (Exception exp)
+        else
         {
-            Log.LogError(exp,
-                         "Send message failed. Text: {Text}, ChatID: {ChatId}, Error: {Message}",
-                         text,
-                         chatId,
-                         exp.Message);
+            userList = _ChatUsers.ListUsersByPermission(message.AllowedReceivers);
+        }
+
+        foreach (var user in userList)
+        {
+            try
+            {
+                await _Bot.SendTextMessageAsync(chatId,
+                                                message.Text,
+                                                ParseMode.MarkdownV2,
+                                                replyToMessageId: message.ReplyMessageId > 0 ? message.ReplyMessageId : null,
+                                                replyMarkup: keyboardMarkup,
+                                                cancellationToken: cancellationToken);
+            }
+            catch (Exception exp)
+            {
+                Log.LogError(exp,
+                             "Send message failed. Text: {Text}, Username: {Username}({ChatId}), Error: {Message}",
+                             message.Text,
+                             user.Username,
+                             user.ChatId,
+                             exp.Message);
+            }
         }
     }
-    
-    private async Task SendPhotoAlbum(long chatId, IEnumerable<InputMediaPhoto> steamList, CancellationToken cancellationToken)
+
+    private async Task SendAttachment(OutgoingMessage message, CancellationToken cancellationToken)
     {
-        //var photo = new InputMediaPhoto(new InputMedia())
-        try
+        var keyboardMarkup = KeyboardMarkup(message);
+        var chatId = message.ChatId;
+        IReadOnlyList<TelegramUser> userList;
+        if (message.DirectMessage)
         {
-            await _Bot.SendMediaGroupAsync(chatId,
-                                           steamList,
-                                           cancellationToken: cancellationToken);
+            userList = new[] { _ChatUsers.GetByChatId(message.ChatId) };
         }
-        catch (Exception exp)
+        else
         {
-            Log.LogError(exp,
-                         "Send album failed. ChatID: {ChatId}, Error: {Message}",
-                         chatId,
-                         exp.Message);
+            userList = _ChatUsers.ListUsersByPermission(message.AllowedReceivers);
+        }
+
+        using var memoryStreamList = new MemoryStreamList();
+        memoryStreamList.AddTelegramFile(message.Attachment);
+
+        foreach (var user in userList)
+        {
+            try
+            {
+                switch (message.AttachmentMediaMediaType)
+                {
+                    case InputMediaType.Photo:
+                        foreach (var file in memoryStreamList.List)
+                        {
+                            await _Bot.SendMediaGroupAsync(chatId,
+                                                           memoryStreamList.List,
+                                                           replyToMessageId: message.ReplyMessageId > 0 ? message.ReplyMessageId : null,
+                                                           cancellationToken: cancellationToken);
+                        }
+                        break;
+
+                    case InputMediaType.Document:
+                        foreach (var file in memoryStreamList.List)
+                        {
+                            await _Bot.SendDocumentAsync(chatId,
+                                                         file.Media,
+                                                         replyToMessageId: message.ReplyMessageId > 0 ? message.ReplyMessageId : null,
+                                                         cancellationToken: cancellationToken);
+                            await Task.Delay(100, cancellationToken); // Hold-on
+                        }
+                        break;
+                    default:
+                        Log.LogError("Can't send attachment file type: {Type}",
+                                     message.AttachmentMediaMediaType.AsString());
+                        break;
+                }
+            }
+            catch (Exception exp)
+            {
+                Log.LogError(exp,
+                             "Send message failed. Text: {Text}, Username: {Username}({ChatId}), Error: {Message}",
+                             message.Text,
+                             user.Username,
+                             user.ChatId,
+                             exp.Message);
+            }
         }
     }
 
@@ -238,7 +310,7 @@ public class BotService : BackgroundService
 
         return Task.CompletedTask;
     }
-    
+
     private IReplyMarkup? KeyboardMarkup(OutgoingMessage message)
     {
         IReplyMarkup? keyboardMarkup;
@@ -325,7 +397,7 @@ public class BotService : BackgroundService
         };
     }
 
-    public InlineKeyboardMarkup FormatInlineSingleLine(long chatId, string type, string subType, IReadOnlyList<TelegramButton> buttons)
+    private InlineKeyboardMarkup FormatInlineSingleLine(long chatId, string type, string subType, IReadOnlyList<TelegramButton> buttons)
     {
         var prefix = $"{type};{chatId};{subType};";
 

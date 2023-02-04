@@ -10,4 +10,5 @@ public enum CacheKeys
     [EnumMember] None,
     [EnumMember] LatestAction,
     [EnumMember] UsersPermissions,
+    [EnumMember] UsersByChatId,
 }

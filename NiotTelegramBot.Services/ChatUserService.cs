@@ -1,8 +1,10 @@
-﻿using ModelzAndUtils.Enums;
+﻿using EnumsNET;
+using Microsoft.Extensions.Logging;
+using ModelzAndUtils;
+using ModelzAndUtils.Enums;
 using ModelzAndUtils.Interfaces;
 using ModelzAndUtils.Models;
-using ModelzAndUtils.Settings;
-using SharedService;
+
 // ReSharper disable UnusedMember.Local
 
 namespace NiotTelegramBot.Services;
@@ -24,7 +26,7 @@ public class ChatUserService : IChatUsers
         _MessageQueueService = messageQueueService;
         _CacheService = cacheService;
 
-        _FilePath = Path.Combine(MicroServiceHost.GetCurrentRootPath(), "data", "config", "users.json");
+        _FilePath = Path.Combine(Directory.GetCurrentDirectory(), "data", "config", "users.json");
         if (!File.Exists(_FilePath))
         {
             Log.LogWarning("Can't find users file, creating empty one");
@@ -86,15 +88,15 @@ public class ChatUserService : IChatUsers
     }
 
     private IEnumerable<T> GetItemById<T>(
-        Func<UsersPermissions, IEnumerable<T>> callMethod,
-        UsersPermissions id,
+        Func<long, IEnumerable<T>> callMethod,
+        long id,
         CacheKeys key,
         TimeSpan timeSpan)
         where T : class
     {
         try
         {
-            var username = id.AsString();
+            var username = id.ToString();
             var cacheEntry = _CacheService.GetCacheList<T>(key, username);
 
             if (cacheEntry.ExistsInCache)
@@ -119,8 +121,9 @@ public class ChatUserService : IChatUsers
         return new List<T>();
     }
 
-    private IEnumerable<TelegramUser> ListUsers(UsersPermissions permissions)
+    private IEnumerable<TelegramUser> ListUsers(long id)
     {
+        var permissions = (UsersPermissions)id;
         return _Users.Value.Select(i => i.Value)
                      .Where(i =>
                                 i.Permission == permissions && i.ChatId > 0);
@@ -130,7 +133,7 @@ public class ChatUserService : IChatUsers
     public List<TelegramUser> ListUsersByPermission(UsersPermissions permission)
     {
         return GetItemById(ListUsers,
-                           permission,
+                           (long)permission,
                            CacheKeys.UsersPermissions,
                            TimeSpan.FromHours(24))
             .ToList();
@@ -170,15 +173,26 @@ public class ChatUserService : IChatUsers
     }
 
     /// <inheritdoc />
-    public long GetChatId(string username)
+    public TelegramUser GetByUsername(string username)
     {
-        return _Users.Value[username].ChatId;
+        return _Users.Value[username];
     }
 
     /// <inheritdoc />
-    public string GetUsername(long chatId)
+    public TelegramUser GetByChatId(long chatId)
     {
-        return _Users.Value.FirstOrDefault(u => u.Value.ChatId == chatId).Key;
+        IReadOnlyList<TelegramUser> TelegramUser(long localChatId)
+        {
+            var telegramUser = _Users.Value.FirstOrDefault(
+                                                           u => u.Value.ChatId == localChatId)
+                                     .Value;
+            return new []{telegramUser};
+        }
+
+        return GetItemById(TelegramUser,
+                           chatId,
+                           CacheKeys.UsersByChatId,
+                           TimeSpan.FromHours(24)).First();
     }
 
     /// <inheritdoc />

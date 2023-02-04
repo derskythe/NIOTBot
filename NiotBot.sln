@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiotTelegramBot", "NiotTele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugins", "Plugins\Plugins.csproj", "{FBB687C5-8C86-4642-8C7F-2EB88070EC66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiotTelegramBot.Services", "NiotTelegramBot.Services\NiotTelegramBot.Services.csproj", "{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{FBB687C5-8C86-4642-8C7F-2EB88070EC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBB687C5-8C86-4642-8C7F-2EB88070EC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBB687C5-8C86-4642-8C7F-2EB88070EC66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E24D8AA-A576-4C89-AFC0-83D3A73000ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

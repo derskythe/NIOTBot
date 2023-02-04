@@ -16,7 +16,7 @@ public static class MicroServiceHost
     private static string _MicroServiceName = string.Empty;
     private static string _PathToContentRoot = string.Empty;
     private static string _BuildNumber = string.Empty;
-    private static string _GitInfo = "";
+    private static string _GitInfo = string.Empty;
 
     public static string BuildNumber
     {

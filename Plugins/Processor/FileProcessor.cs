@@ -59,17 +59,18 @@ public sealed partial class FileProcessor : IPluginProcessor
     }
 
     /// <inheritdoc />
-    public async Task<ProcessorResponseValue> Tick()
+    public Task<ProcessorResponseValue> Tick()
     {
+        // TODO: change this thing from Tick to FileWatcher
         if (!Enabled)
         {
-            return new ProcessorResponseValue();
+            return Task.FromResult(new ProcessorResponseValue());
         }
 
         if (_Filetypes.Count == 0)
         {
             Enabled = true;
-            return new ProcessorResponseValue();
+            return Task.FromResult(new ProcessorResponseValue());
         }
 
         var errorsText = new StringBuilder();
@@ -94,26 +95,42 @@ public sealed partial class FileProcessor : IPluginProcessor
                     continue;
                 }
 
-                var attached = new List<byte[]>(foundFiles.Count);
+                var attached = new List<TelegramFile>(foundFiles.Count);
                 foreach (var filePath in foundFiles)
                 {
-                    var fileBody = Array.Empty<byte>();
+                    // var fileBody = Array.Empty<byte>();
+                    // {
+                    //     await File.ReadAllBytesAsync(filePath, _CancellationToken);
+                    // }
+                    //
+                    // if (fileBody.Length == 0)
+                    // {
+                    //     Log.LogWarning("{FilePath} Length is 0 , ignoring", filePath);
+                    //     continue;
+                    // }
+                    var fileInfo = new FileInfo(filePath);
+                    if (IsFileLocked(fileInfo))
                     {
-                        await File.ReadAllBytesAsync(filePath, _CancellationToken);
-                    }
-
-                    if (fileBody.Length == 0)
-                    {
-                        Log.LogWarning("{FilePath} Length is 0 , ignoring", filePath);
+                        Log.LogWarning("R/W problem with file: {File}", filePath);
                         continue;
                     }
 
-                    attached.Add(fileBody);
+                    var telegramFile = new TelegramFile(filePath, fileInfo);
+                    attached.Add(telegramFile);
                     filesToMove.Add(filePath, value.OutputDir);
                 }
 
+                var sampleFile = attached.FirstOrDefault();
+                if (sampleFile == null)
+                {
+                    Log.LogWarning("No files was attached during media scan for {Extension}",
+                                   value.Extensions.GetStringFromArraySingleLine());
+                    continue;
+                }
+                
                 var message = new OutgoingMessage(UsersPermissions.Read,
                                                   attached,
+                                                  sampleFile.Type,
                                                   SourceSourceProcessor);
                 response.Add(message);
             }
@@ -150,11 +167,38 @@ public sealed partial class FileProcessor : IPluginProcessor
             }
         }
 
-        return errorsText.Length > 0 ?
-                   new ProcessorResponseValue(
-                                              errorsText.ToString(),
-                                              response) :
-                   new ProcessorResponseValue(response);
+        return Task.FromResult(errorsText.Length > 0 ?
+                                   new ProcessorResponseValue(
+                                                              errorsText.ToString(),
+                                                              response) :
+                                   new ProcessorResponseValue(response));
+    }
+    
+    private static bool IsFileLocked(FileInfo file)
+    {
+        try
+        {
+            using var stream = file.Open(FileMode.Open,
+                                         FileAccess.ReadWrite,
+                                         FileShare.None);
+            stream.Close();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // But we can't do anything with file
+            return true;
+        }
+        catch (IOException)
+        {
+            //the file is unavailable because it is:
+            //still being written to
+            //or being processed by another thread
+            //or does not exist (has already been processed)
+            return true;
+        }
+
+        //file is not locked
+        return false;
     }
 
     /// <inheritdoc />
