@@ -28,13 +28,13 @@ public sealed class UserAuditProcessor : AbstractMessageTypeProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public UserAuditProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
-        : base(loggerFactory, processorSettings, dataSources, chatUsers, cache, inputSettings, cancellationToken)
+        : base(loggerFactory, settings, dataSources, chatUsers, cache, inputSettings, cancellationToken)
     {
         var log = loggerFactory.CreateLogger<RuntimeErrorProcessor>();
 

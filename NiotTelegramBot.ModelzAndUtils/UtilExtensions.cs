@@ -11,7 +11,9 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using NiotTelegramBot.ModelzAndUtils.Enums;
+using NiotTelegramBot.ModelzAndUtils.Models;
+using Telegram.Bot.Types.Enums;
+using Emoji = NiotTelegramBot.ModelzAndUtils.Enums.Emoji;
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -19,7 +21,7 @@ namespace NiotTelegramBot.ModelzAndUtils;
 
 public static class UtilExtensions
 {
-    public static string ShowCount<T>(this List<T>? list)
+    public static string ShowCount<T>(this IReadOnlyList<T>? list)
     {
         return list == null ? "0" : list.Count.ToString();
     }
@@ -43,7 +45,7 @@ public static class UtilExtensions
     {
         var str = new StringBuilder();
         var emojiReady = emoji.GetEmoji();
-    
+
         if (!string.IsNullOrWhiteSpace(emojiReady))
         {
             str.Append(emojiReady).Append(' ');
@@ -52,7 +54,7 @@ public static class UtilExtensions
         str.Append(args);
         return str.ToString();
     }
-    
+
     public static string MessageCombine(this Emoji emoji, params string[] args)
     {
         var str = new StringBuilder();
@@ -189,12 +191,12 @@ public static class UtilExtensions
     //
     //     return fields.ToString();
     // }
-    
+
     public static bool IsEnumerableOrCollectionType(this Type type)
     {
         return (type.GetInterface(nameof(IEnumerable)) != null) || (type.GetInterface(nameof(ICollection)) != null);
     }
-    
+
     public static string GetStringFromArraySingleLine<T, TV>(this IDictionary<T, TV>? list, bool singleLine = true)
     {
         return list.GetStringFromArray(singleLine);
@@ -210,24 +212,42 @@ public static class UtilExtensions
         return path;
     }
 
-    public static string ToJsonIntended<T>(this T value)  where T : class
+    public static string ToJsonIntended<T>(this T value)
+        where T : class
     {
         return JsonSerializer.Serialize(value, _Options);
     }
-    
-    public static T FromJson<T>(this string value)  where T : class, new()
+
+    public static T FromJson<T>(this string value)
+        where T : class, new()
     {
         return JsonSerializer.Deserialize(value, typeof(T), _Options) as T ?? new T();
     }
+
+    public static string MessageShort(this MessageType type, string? message)
+    {
+        return !string.IsNullOrEmpty(message) && message.Length > 255 ?
+                   message[..255] :
+                   $"Type: {type.AsString()}";
+    }
     
+    public static string MessageShort(this string? text)
+    {
+        return !string.IsNullOrEmpty(text) && text.Length > 255 ?
+                   text[..255] :
+                   string.IsNullOrEmpty(text) ? string.Empty : text;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task WriteJsonAsync<T>(this T value, Stream stream, CancellationToken cancellationToken)  where T : class
+    public static async Task WriteJsonAsync<T>(this T value, Stream stream, CancellationToken cancellationToken)
+        where T : class
     {
         await JsonSerializer.SerializeAsync(stream, value, _Options, cancellationToken);
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<T> ReadJsonAsync<T>(this string value, Stream stream, CancellationToken cancellationToken)  where T : class, new()
+    public static async Task<T> ReadJsonAsync<T>(this Stream stream, CancellationToken cancellationToken)
+        where T : class, new()
     {
         return await JsonSerializer.DeserializeAsync(stream, typeof(T), _Options, cancellationToken) as T ?? new T();
     }
@@ -242,9 +262,13 @@ public static class UtilExtensions
         IgnoreReadOnlyFields = true,
         IgnoreReadOnlyProperties = true,
         UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
-        ReadCommentHandling = JsonCommentHandling.Allow,
+        ReadCommentHandling = JsonCommentHandling.Skip,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        NumberHandling = JsonNumberHandling.AllowReadingFromString 
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        Converters =
+        {
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+        }
     };
 }

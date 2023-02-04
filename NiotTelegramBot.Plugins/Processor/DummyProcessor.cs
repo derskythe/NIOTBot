@@ -58,16 +58,16 @@ public sealed class DummyProcessor : IPluginProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public DummyProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
     {
         Log = loggerFactory.CreateLogger<DummyProcessor>();
         SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
-        Order = processorSettings.Order;
+        Order = settings.Order;
 
         Log.LogInformation("Status: {Status}", Enabled ? Constants.STARTED : Constants.STAY_SLEPPING);
     }

@@ -18,4 +18,8 @@ public interface IMessageQueueService
     void ProcessEnqueue(MessageProcess message);
 
     MessageProcess? ProcessDequeue();
+
+    bool IsEmptyProcessQueue();
+    
+    bool IsEmptyOutgoingQueue();
 }

@@ -37,28 +37,28 @@
         <value>User audit message</value>
     </data>
     <data name="EchoProcessor" xml:space="preserve">
-        <value>EchoProcessor</value>
+        <value>Echo</value>
     </data>
     <data name="RuntimeErrorProcessor" xml:space="preserve">
-        <value>RuntimeErrorProcessor</value>
+        <value>Errors</value>
     </data>
     <data name="AbstractMessageTypeProcessor" xml:space="preserve">
         <value>AbstractMessageTypeProcessor</value>
     </data>
     <data name="StartStopInfoProcessor" xml:space="preserve">
-        <value>StartStopInfoProcessor</value>
+        <value>StartStop Info</value>
     </data>
     <data name="UserAuditProcessor" xml:space="preserve">
-        <value>UserAuditProcessor</value>
+        <value>User Audit</value>
     </data>
     <data name="DummyProcessor" xml:space="preserve">
-        <value>DummyProcessor</value>
+        <value>Dummy</value>
     </data>
     <data name="FileProcessor" xml:space="preserve">
-        <value>FileProcessor</value>
-    </data>
-    <data name="OrphainedMessagesProcessor" xml:space="preserve">
-        <value>OrphainedMessagesProcessor</value>
+        <value>Files</value>
+    </data>s
+    <data name="DefaultMessagesProcessor" xml:space="preserve">
+        <value>Default</value>
     </data>
     <data name="MessageReceived" xml:space="preserve">
         <value>Message received:</value>

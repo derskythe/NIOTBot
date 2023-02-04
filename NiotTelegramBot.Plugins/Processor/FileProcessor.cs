@@ -39,10 +39,13 @@ public sealed partial class FileProcessor : IPluginProcessor
     public int Order { get; set; }
 
     private bool _InvalidConfig;
+    // ReSharper disable NotAccessedField.Local
     private readonly IChatUsers _ChatUsers;
     private readonly IReadOnlyDictionary<string, IPluginDataSource> _DataSources;
     private readonly IReadOnlyDictionary<MessageType, FileProcessorSettings> _Filetypes;
     private readonly CancellationToken _CancellationToken;
+    private readonly ICacheService _Cache;
+    // ReSharper restore NotAccessedField.Local
 
     /// <inheritdoc />
     public bool Healthcheck()
@@ -227,19 +230,20 @@ public sealed partial class FileProcessor : IPluginProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public FileProcessor(
         ILoggerFactory loggerFactory,
-        IPluginProcessor processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
     {
         Log = loggerFactory.CreateLogger<FileProcessor>();
         _CancellationToken = cancellationToken;
         _DataSources = dataSources;
         _ChatUsers = chatUsers;
+        _Cache = cache;
         SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
-        Order = processorSettings.Order;
+        Order = settings.Order;
 
         var fileTypes = new Dictionary<MessageType, FileProcessorSettings>();
         foreach (var (key, inputValue) in inputSettings)
@@ -296,7 +300,7 @@ public sealed partial class FileProcessor : IPluginProcessor
             Enabled = false;
         }
 
-        Enabled = processorSettings.Enabled;
+        Enabled = settings.Enabled;
 
         Log.LogInformation("Status: {Status}",
                            Enabled ?

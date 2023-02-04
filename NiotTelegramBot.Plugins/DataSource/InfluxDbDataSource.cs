@@ -9,7 +9,7 @@ public class InfluxDbDataSource : IPluginDataSource
 {
     // ReSharper disable once InconsistentNaming
     private readonly ILogger<InfluxDbDataSource> Log;
-    private readonly PluginDataSourceSettings _Settings;
+    private readonly DataSourceSettings _Settings;
     private readonly string _Uri;
     private readonly string _Token;
     private readonly InfluxDBClient _Client;
@@ -18,7 +18,7 @@ public class InfluxDbDataSource : IPluginDataSource
     private readonly CancellationToken _CancelationToken;
     private readonly string _Org;
 
-    public InfluxDbDataSource(ILoggerFactory loggerFactory, PluginDataSourceSettings settings, CancellationToken cancellationToken)
+    public InfluxDbDataSource(ILoggerFactory loggerFactory, DataSourceSettings settings, CancellationToken cancellationToken)
     {
         Log = loggerFactory.CreateLogger<InfluxDbDataSource>();
         _CancelationToken = cancellationToken;

@@ -9,6 +9,7 @@ using NiotTelegramBot.ModelzAndUtils.Settings;
 
 namespace NiotTelegramBot.Plugins.Processor;
 
+// NiotTelegramBot.Plugins.Processor.DefaultMessagesProcessor
 public class DefaultMessagesProcessor : IPluginProcessor
 {
     public string Name => nameof(DefaultMessagesProcessor);
@@ -17,7 +18,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
     public Emoji Icon { get; set; } = Emoji.WearyCat; // 🙀
 
     /// <inheritdoc cref="ModelzAndUtils.Interfaces.IPluginProcessor" />
-    public string NameForUser { get; set; } = i18n.OrphainedMessagesProcessor;
+    public string NameForUser { get; set; } = i18n.DefaultMessagesProcessor;
 
     /// <inheritdoc cref="ModelzAndUtils.Interfaces.IPluginProcessor" />
     public TelegramMenu[] Menu { get; set; } = Array.Empty<TelegramMenu>();
@@ -31,7 +32,10 @@ public class DefaultMessagesProcessor : IPluginProcessor
     // ReSharper disable once InconsistentNaming
     private readonly ILogger<DefaultMessagesProcessor> Log;
     
+    // ReSharper disable once NotAccessedField.Local
     private readonly ICacheService _Cache;
+    // ReSharper disable once NotAccessedField.Local
+    private readonly IChatUsers _ChatUsers;
 
     /// <inheritdoc />
     public int Order { get; set; }
@@ -53,7 +57,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
     {
         // TODO: change to getting more things
         // In first run we don't know which processor can answer        
-        if (!Enabled || message.Type != ProcessorEventType.Message || !message.IsOrphained || message.Update == null)
+        if (!Enabled || !message.IsOrphained || message.Update == null)
         {
             return Task.FromResult(new ProcessorResponseValue());
         }
@@ -62,7 +66,23 @@ public class DefaultMessagesProcessor : IPluginProcessor
         {
             Log.LogInformation("Invalid message type received: {MessageType}",
                                message.Update.Type.AsString());
-            return Task.FromResult(new ProcessorResponseValue());
+
+            var chatId = message.Update.Message?.Chat.Id ?? 0;
+            if (chatId > 0)
+            {
+                return Task.FromResult(
+                                       ProcessorResponseValue.SingleOutgoingMessage(
+                                                                                    new OutgoingMessage(
+                                                                                     chatId,
+                                                                                     Emoji.Robot.MessageCombine(i18n.MessageSelectMenu),
+                                                                                     SourceSourceProcessor)
+                                                                                   )
+                                      );
+            }
+
+            var expMessage = $"Failed to obtain response chat ID! Proccess: {message}";
+            Log.LogError("{Message}", expMessage);
+            return Task.FromResult(new ProcessorResponseValue(expMessage));
         }
 
         // if (incomingMessage.Text is not { } messageText)
@@ -76,11 +96,9 @@ public class DefaultMessagesProcessor : IPluginProcessor
         //     }));
         // }
 
-        var messageText = !string.IsNullOrEmpty(incomingMessage.Text) ?
-                              incomingMessage.Text[..255] :
-                              $"Type: {incomingMessage.Type.AsString()}";
+        var messageText = incomingMessage.Type.MessageShort(incomingMessage.Text);
         // var responseMessage = new StringBuilder();
-        // responseMessage.Append($"{i18n.MessageReceived} {messageText[..250]}");
+        // responseMessage.Append($"{i18n.MessageReceived} {messageText[..]}");
         Log.LogInformation("{Text}", messageText);
         return Task.FromResult(
                                ProcessorResponseValue.SingleOutgoingMessage(
@@ -95,17 +113,20 @@ public class DefaultMessagesProcessor : IPluginProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public DefaultMessagesProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
+        IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
     {
         _Cache = cache;
+        _ChatUsers = chatUsers;
+        
         Log = loggerFactory.CreateLogger<DefaultMessagesProcessor>();
         SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Enabled = true;
-        Order = processorSettings.Order;
+        Order = settings.Order;
 
         Log.LogInformation("Status: {Status}", Enabled ? Constants.STARTED : Constants.STAY_SLEPPING);
     }

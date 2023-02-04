@@ -3,8 +3,13 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace NiotTelegramBot.ModelzAndUtils.Settings;
 
-public class PluginDataSourceSettings : PluginAbstractSettings
+[Serializable]
+public class DataSourceSettings
 {
+    public const string NAME = "PluginsDataSource";
+    
+    public string Name { get; set; } = string.Empty;
+    public bool Enabled { get; set; }
     public string Hostname { get; set; }= string.Empty;
     public int Port { get; set; }
     public string Proto { get; set; }= string.Empty;
@@ -16,16 +21,16 @@ public class PluginDataSourceSettings : PluginAbstractSettings
     /// <inheritdoc />
     public override string ToString()
     {
+        var password = !string.IsNullOrEmpty(Password) ? Constants.VALID : Constants.EMPTY;
         return
-            $"{base.ToString()}, Hostname: {Hostname}, Port: {Port}, Proto: {Proto}, DatabaseName: {DatabaseName}, Username: {Username}, Password: {Password}, Timeout: {Timeout}";
+            $"{Name} ({Enabled}), Hostname: {Hostname}, Port: {Port}, Proto: {Proto}, DatabaseName: {DatabaseName}, Username: {Username}, " +
+            $"Password: {password}, Timeout: {Timeout}";
     }
 }
 
 public class PluginDataSourceArraySettings
 {
-    public const string NAME = "PluginsDataSource";
-
-    public List<PluginDataSourceSettings> List { get; set; } = new(0);
+    public IReadOnlyList<DataSourceSettings> List { get; set; }
 
     /// <inheritdoc />
     public override string ToString()

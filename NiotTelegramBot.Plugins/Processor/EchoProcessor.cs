@@ -63,6 +63,8 @@ public sealed class EchoProcessor : IPluginProcessor
     /// <inheritdoc />
     public Task<ProcessorResponseValue> Process(MessageProcess message)
     {
+        Log.LogDebug("Type: {Type}",
+                     message.Type.AsString());
         if (!Enabled || message.Type != ProcessorEventType.Message || message.Update == null)
         {
             return Task.FromResult(new ProcessorResponseValue());
@@ -70,7 +72,7 @@ public sealed class EchoProcessor : IPluginProcessor
 
         if (message.Update.Message is not { } incomingMessage)
         {
-            Log.LogInformation("Invalid message type received: {MessageType}", message.Update.Type.AsString());
+            Log.LogWarning("Invalid message type received: {MessageType}", message.Update.Type.AsString());
             return Task.FromResult(new ProcessorResponseValue());
         }
 
@@ -87,7 +89,7 @@ public sealed class EchoProcessor : IPluginProcessor
         }
 
         var responseMessage = new StringBuilder();
-        responseMessage.Append($"{i18n.MessageReceived} {messageText[..250]}");
+        responseMessage.Append($"{i18n.MessageReceived} {messageText.MessageShort()}");
 
         Log.LogInformation("{Text}", responseMessage);
         return Task.FromResult(
@@ -108,17 +110,17 @@ public sealed class EchoProcessor : IPluginProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public EchoProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
     {
         Log = loggerFactory.CreateLogger<EchoProcessor>();
         _DataSources = dataSources;
         SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
-        Order = processorSettings.Order;
+        Order = settings.Order;
 
         Log.LogInformation("Status: {Status}",
                            Enabled ?

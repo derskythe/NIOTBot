@@ -44,7 +44,7 @@ public abstract class AbstractMessageTypeProcessor : IPluginProcessor
     // ReSharper disable InconsistentNaming
     protected readonly IChatUsers _ChatUsers;
     protected readonly IReadOnlyDictionary<string, IPluginDataSource> _DataSources;
-    protected readonly PluginProcessorSettings _ProcessorSettings;
+    protected readonly ProcessorSettings Settings;
 
     protected readonly CancellationToken _CancellationToken;
 
@@ -54,7 +54,7 @@ public abstract class AbstractMessageTypeProcessor : IPluginProcessor
     /// <inheritdoc />
     public bool Healthcheck()
     {
-        return _ProcessorSettings.Enabled == Enabled;
+        return Settings.Enabled == Enabled;
     }
 
     /// <inheritdoc />
@@ -102,26 +102,26 @@ public abstract class AbstractMessageTypeProcessor : IPluginProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     protected AbstractMessageTypeProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
     {
         _Cache = cache;
         Log = loggerFactory.CreateLogger<AbstractMessageTypeProcessor>();
         _CancellationToken = cancellationToken;
-        _ProcessorSettings = processorSettings;
+        Settings = settings;
         _DataSources = dataSources;
         _ChatUsers = chatUsers;
         
         // ReSharper disable once VirtualMemberCallInConstructor
-        Enabled = _ProcessorSettings.Enabled;
+        Enabled = Settings.Enabled;
         // ReSharper disable once VirtualMemberCallInConstructor
         SourceSourceProcessor = SourceProcessors.InvalidProcessor;
         // ReSharper disable once VirtualMemberCallInConstructor
-        Order = processorSettings.Order;
+        Order = settings.Order;
     }
 
     protected UsersPermissions Permissions { get; set; } = UsersPermissions.None;

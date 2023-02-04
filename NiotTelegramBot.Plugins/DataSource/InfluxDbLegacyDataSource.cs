@@ -19,7 +19,7 @@ public class InfluxDbLegacyDataSource : IPluginDataSource
 
     public InfluxDbLegacyDataSource(
         ILoggerFactory logggerFactory,
-        PluginDataSourceSettings settings,
+        DataSourceSettings settings,
         CancellationToken cancellationToken)
     {
         Log = logggerFactory.CreateLogger<InfluxDbLegacyDataSource>();

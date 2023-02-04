@@ -12,13 +12,13 @@ public class MessageQueueService : IMessageQueueService
 
     // ReSharper disable once InconsistentNaming
     private readonly ILogger<MessageQueueService> Log;
-    private readonly ConcurrentQueue<OutgoingMessage> _IncomingQueue;
+    private readonly ConcurrentQueue<OutgoingMessage> _OutgoingQueue;
     private readonly ConcurrentQueue<MessageProcess> _ProcessQueue;
 
     public MessageQueueService(ILogger<MessageQueueService> log)
     {
         Log = log;
-        _IncomingQueue = new ConcurrentQueue<OutgoingMessage>();
+        _OutgoingQueue = new ConcurrentQueue<OutgoingMessage>();
         _ProcessQueue = new ConcurrentQueue<MessageProcess>();
     }
 
@@ -28,12 +28,15 @@ public class MessageQueueService : IMessageQueueService
 
     public void OutgoingEnqueue(OutgoingMessage message)
     {
-        _IncomingQueue.Enqueue(message);
+        CheckOutgoingQueue();
+
+        Log.LogDebug("Outgoing message: {Message}", message.ToString());
+        _OutgoingQueue.Enqueue(message);
     }
 
-    public void OutgoingEnqueue(List<OutgoingMessage> messagesList)
+    private void CheckOutgoingQueue()
     {
-        var count = _IncomingQueue.Count;
+        var count = _OutgoingQueue.Count;
         if (count > 0 && count % 5 == 0)
         {
             Log.LogWarning("Incoming message queue is expanding! Count: {Count}", count);
@@ -42,16 +45,22 @@ public class MessageQueueService : IMessageQueueService
         {
             Log.LogDebug("Incoming message queue count: {Count}", count);
         }
+    }
+
+    public void OutgoingEnqueue(List<OutgoingMessage> messagesList)
+    {
+        CheckOutgoingQueue();
 
         foreach (var message in messagesList)
         {
-            _IncomingQueue.Enqueue(message);
+            Log.LogDebug("Outgoing message: {Message}", message.ToString());
+            _OutgoingQueue.Enqueue(message);
         }
     }
 
     public OutgoingMessage? OutgoingDequeue()
     {
-        if (_IncomingQueue.IsEmpty || _IncomingQueue.TryDequeue(out var result))
+        if (IsEmptyOutgoingQueue() || !_OutgoingQueue.TryDequeue(out var result))
         {
             return null;
         }
@@ -59,11 +68,27 @@ public class MessageQueueService : IMessageQueueService
         return result;
     }
 
+    /// <inheritdoc />
+    public bool IsEmptyOutgoingQueue()
+    {
+        return _OutgoingQueue.IsEmpty;
+    }
+
     #endregion
 
     #region ProcessEnqueue
 
     public void ProcessEnqueue(MessageProcess message)
+    {
+        CheckProcessQueue();
+        _ProcessQueue.Enqueue(message);
+
+#if DEBUG
+        CheckProcessQueue();
+#endif
+    }
+
+    private void CheckProcessQueue()
     {
         var count = _ProcessQueue.Count;
         if (count > 0 && count % 5 == 0)
@@ -74,18 +99,23 @@ public class MessageQueueService : IMessageQueueService
         {
             Log.LogDebug("Process queue count: {Count}", count);
         }
-
-        _ProcessQueue.Enqueue(message);
     }
 
     public MessageProcess? ProcessDequeue()
     {
-        if (_ProcessQueue.IsEmpty || _ProcessQueue.TryDequeue(out var result))
+        if (IsEmptyProcessQueue() || !_ProcessQueue.TryDequeue(out var result))
         {
             return null;
         }
 
+        Log.LogDebug("Process queue, obtain message: {Message}", result?.ToString());
         return result;
+    }
+
+    /// <inheritdoc />
+    public bool IsEmptyProcessQueue()
+    {
+        return _ProcessQueue.IsEmpty;
     }
 
     #endregion

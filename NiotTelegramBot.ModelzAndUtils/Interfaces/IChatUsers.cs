@@ -16,4 +16,5 @@ public interface IChatUsers
     public TelegramUser GetByChatId(long chatId);
     public bool HasPermission(string username, UsersPermissions permissions);
     public List<TelegramUser> ListUsersByPermission(UsersPermissions all);
+    public Task UpdateChatId(string username, long chatId);
 }

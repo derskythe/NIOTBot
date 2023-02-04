@@ -28,13 +28,13 @@ public sealed class RuntimeErrorProcessor : AbstractMessageTypeProcessor
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public RuntimeErrorProcessor(
         ILoggerFactory loggerFactory,
-        PluginProcessorSettings processorSettings,
+        ProcessorSettings settings,
         IReadOnlyDictionary<string, IPluginDataSource> dataSources,
         IChatUsers chatUsers,
         ICacheService cache,
-        IReadOnlyDictionary<MessageType, PluginOutgoingInputSettings> inputSettings,
+        IReadOnlyDictionary<MessageType, OutgoingInputSettings> inputSettings,
         CancellationToken cancellationToken)
-        : base(loggerFactory, processorSettings, dataSources, chatUsers, cache, inputSettings, cancellationToken)
+        : base(loggerFactory, settings, dataSources, chatUsers, cache, inputSettings, cancellationToken)
     {
         var log = loggerFactory.CreateLogger<RuntimeErrorProcessor>();
 
@@ -47,7 +47,7 @@ public sealed class RuntimeErrorProcessor : AbstractMessageTypeProcessor
         };
         MessageTitle = i18n.ErrorRuntime;
         AddEventType = false;
-        Order = processorSettings.Order;
+        Order = settings.Order;
 
         log.LogInformation("Status: {Status}", Enabled ? Constants.STARTED : Constants.STAY_SLEPPING);
     }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NiotTelegramBot.ModelzAndUtils;
 using NiotTelegramBot.ModelzAndUtils.Enums;
 using NiotTelegramBot.ModelzAndUtils.Interfaces;
 using NiotTelegramBot.ModelzAndUtils.Models;
+using NiotTelegramBot.ModelzAndUtils.Settings;
 
 // ReSharper disable UnusedMember.Local
 
@@ -19,7 +21,11 @@ public class ChatUserService : IChatUsers
     private readonly Lazy<Dictionary<string, TelegramUser>> _Users;
     private readonly SemaphoreSlim _Semaphore = new(1);
 
-    public ChatUserService(ILogger<ChatUserService> log, IMessageQueueService messageQueueService, ICacheService cacheService)
+    public ChatUserService(
+        ILogger<ChatUserService> log,
+        IMessageQueueService messageQueueService,
+        ICacheService cacheService,
+        IOptions<BotSettings> configuration)
     {
         Log = log;
         _MessageQueueService = messageQueueService;
@@ -40,7 +46,38 @@ public class ChatUserService : IChatUsers
             {
                 result = File.ReadAllText(_FilePath)
                              .FromJson<List<TelegramUser>>()
-                             .ToDictionary(s => s.Username);
+                             .ToDictionary(s => s.Username.ToLowerInvariant(),
+                                           user => new TelegramUser()
+                                           {
+                                               Username = user.Username.ToLowerInvariant(),
+                                               Permission = user.Permission,
+                                               ChatId = user.ChatId
+                                           });
+
+                if (result.Count == 0)
+                {
+                    Log.LogWarning("Trying to setup user configuration");
+
+                    var splited = configuration.Value.AllowedUsernames.Split(';');
+
+                    if (splited.Length == 0)
+                    {
+                        Log.LogError("All user configurations are empty!");
+                    }
+                    else
+                    {
+                        foreach (var username in splited)
+                        {
+                            result.Add(username,
+                                       new TelegramUser()
+                                       {
+                                           ChatId = 0, 
+                                           Username = username.ToLowerInvariant(), 
+                                           Permission = UsersPermissions.System
+                                       });
+                        }
+                    }
+                }
             }
             catch (Exception exp)
             {
@@ -59,6 +96,7 @@ public class ChatUserService : IChatUsers
 
             return result;
         });
+        SaveToFileAsync().ConfigureAwait(false);
     }
 
     private T GetItemByWithoutId<T>(Func<T> callMethod, CacheKeys key, TimeSpan timeSpan)
@@ -141,7 +179,7 @@ public class ChatUserService : IChatUsers
     /// <inheritdoc />
     public bool IsAuthorized(string username)
     {
-        return _Users.Value.ContainsKey(username);
+        return _Users.Value.ContainsKey(username.ToLowerInvariant());
     }
 
     /// <inheritdoc />
@@ -151,30 +189,30 @@ public class ChatUserService : IChatUsers
         _Users.Value.Add(username,
                          new TelegramUser()
                          {
-                             Username = username,
+                             Username = username.ToLowerInvariant(),
                              ChatId = chatId
                          });
         _MessageQueueService.ProcessEnqueue(new MessageProcess(
                                                                ProcessorEventType.AddUser,
                                                                username));
-        await SaveToFile();
+        await SaveToFileAsync();
     }
 
     /// <inheritdoc />
     public async Task RemoveUser(string username)
     {
-        Log.LogInformation("Delete username: {Username}", username);
+        Log.LogInformation("Delete username: {Username}", username.ToLowerInvariant());
         _Users.Value.Remove(username);
         _MessageQueueService.ProcessEnqueue(new MessageProcess(
                                                                ProcessorEventType.RemoveUser,
                                                                username));
-        await SaveToFile();
+        await SaveToFileAsync();
     }
 
     /// <inheritdoc />
     public TelegramUser GetByUsername(string username)
     {
-        return _Users.Value[username];
+        return _Users.Value[username.ToLowerInvariant()];
     }
 
     /// <inheritdoc />
@@ -185,22 +223,39 @@ public class ChatUserService : IChatUsers
             var telegramUser = _Users.Value.FirstOrDefault(
                                                            u => u.Value.ChatId == localChatId)
                                      .Value;
-            return new []{telegramUser};
+            return new[] { telegramUser };
         }
 
         return GetItemById(TelegramUser,
                            chatId,
                            CacheKeys.UsersByChatId,
-                           TimeSpan.FromHours(24)).First();
+                           TimeSpan.FromHours(24))
+            .First();
     }
 
     /// <inheritdoc />
     public bool HasPermission(string username, UsersPermissions permissions)
     {
-        return _Users.Value[username].Permission == permissions;
+        return _Users.Value[username.ToLowerInvariant()].Permission == permissions;
     }
 
-    private async Task SaveToFile()
+    public async Task UpdateChatId(string username, long chatId)
+    {
+        var user = _Users.Value[username.ToLowerInvariant()];
+        if (user.ChatId == chatId)
+        {
+            return;
+        }
+
+        Log.LogInformation("Update ChatID value for {Username}.Prev:{Prev},Current:{Current}",
+                           username,
+                           user.ChatId,
+                           chatId);
+        _Users.Value[username.ToLowerInvariant()].ChatId = chatId;
+        await SaveToFileAsync();
+    }
+
+    private async Task SaveToFileAsync()
     {
         var obtainResult = await _Semaphore.WaitAsync(TimeSpan.FromMinutes(1));
         var json = _Users.Value.Select(s => s.Value).ToList().ToJsonIntended();

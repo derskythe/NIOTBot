@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NiotTelegramBot.ModelzAndUtils.Interfaces;
 using NiotTelegramBot.ModelzAndUtils.Settings;
 using NiotTelegramBot.Services;
@@ -62,22 +63,27 @@ internal static class Program
     {
         var configuration = hostBuilderContext.Configuration;
         services.AddOptions();
-        var sectionPluginInput = configuration.GetSection(PluginInputArraySettings.NAME);
-        services.AddOptions<IEnumerable<PluginInputArraySettings>>()
-                .Bind(sectionPluginInput);
+        var outgoingInputSection = configuration.GetSection(OutgoingInputSettings.NAME);
+        services.AddOptions<List<OutgoingInputSettings>>()
+                .Bind(outgoingInputSection);
 
-        var sectionPluginDataSource = configuration.GetSection(PluginDataSourceArraySettings.NAME);
-        services.AddOptions<IEnumerable<PluginDataSourceArraySettings>>()
-                .Bind(sectionPluginDataSource);
+        var dataSourceSection = configuration.GetSection(DataSourceSettings.NAME);
+        services.AddOptions<List<DataSourceSettings>>()
+                .Bind(dataSourceSection);
 
-        var sectionPluginProcessor = configuration.GetSection(PluginProcessorArraySettings.NAME);
-        services.AddOptions<IEnumerable<PluginProcessorArraySettings>>()
-                .Bind(sectionPluginProcessor);
+        var processorSection = configuration.GetSection(PluginProcessorArraySettings.NAME);
+        services.AddOptions<List<ProcessorSettings>>()
+                .Bind(processorSection);
+        
+        var sectionBot = configuration.GetSection(BotSettings.NAME);
+        services.AddOptions<BotSettings>()
+                .Bind(sectionBot);
 
-        var apiKey = configuration.GetSection("Token").Value ?? string.Empty;
+        var apiKey = sectionBot.GetValue<string>("Token");
 
         services.AddHttpClient();
         // Services
+        services.AddSingleton(configuration);
         services.AddSingleton<ITelegramBotClient, TelegramBotClient>(
                                                                      _ => new TelegramBotClient(apiKey));
         services.AddSingleton<ICacheService, CacheService>();
@@ -88,5 +94,6 @@ internal static class Program
         services.AddBackgroundServiceBehavior();
         services.AddHostedService<ConsoleHostedService>();
         services.AddHostedService<PluginManagerService>();
+        services.AddHostedService<BotService>();
     }
 }

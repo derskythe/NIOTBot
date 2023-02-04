@@ -122,7 +122,7 @@ public class OutgoingMessage
     {
         var receiver = DirectMessage ? ChatId.ToString() : Constants.ALL;
         var permissions = AllowedReceivers == UsersPermissions.System ? string.Empty : $", Permissions: {AllowedReceivers.ToString()}";
-        var attachments = Attachment.Count > 0 ? string.Empty : $", Permissions: {Attachment.Count}";
+        var attachments = Attachment == null || Attachment.Count == 0 ? string.Empty : $", AttachmentCount: {Attachment.Count}";
         return
             $"MessageType: {Type.AsString()} ({SourceProcessor.AsString()}), Receiver: {receiver}, Message: {Text}{permissions}{attachments}";
     }

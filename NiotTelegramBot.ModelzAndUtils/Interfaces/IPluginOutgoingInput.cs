@@ -10,6 +10,6 @@ public interface IPluginOutgoingInput : IHostedService
 {
     public string Name { get; }
     public bool Enabled { get; set; }
-    public void Init(PluginOutgoingInputSettings outgoingInputSettings);
+    public void Init(OutgoingInputSettings outgoingInputSettings);
     public bool Healthcheck();
 }

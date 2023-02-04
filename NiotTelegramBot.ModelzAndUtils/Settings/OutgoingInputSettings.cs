@@ -4,9 +4,12 @@
 // ReSharper disable ClassNeverInstantiated.Global
 namespace NiotTelegramBot.ModelzAndUtils.Settings;
 
-/// <inheritdoc />
-public class PluginOutgoingInputSettings : PluginAbstractSettings
+public class OutgoingInputSettings
 {
+    public const string NAME = "PluginsOutgoingInput";
+    
+    public string Name { get; set; } = string.Empty;
+    public bool Enabled { get; set; }
     public string InputDir { get; set; } = string.Empty;
     public string OutputDir { get; set; } = string.Empty;
     public string Options { get; set; } = string.Empty;
@@ -14,19 +17,6 @@ public class PluginOutgoingInputSettings : PluginAbstractSettings
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{base.ToString()}, InputDir: {InputDir}, OutputDir: {OutputDir}, Options: {Options}";
-    }
-}
-
-public class PluginInputArraySettings
-{
-    public const string NAME = "PluginsInput";
-
-    public List<PluginOutgoingInputSettings> List { get; set; } = new(0);
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return $"List: {List.ShowCount()}";
+        return $"{Name} ({Enabled}),, InputDir: {InputDir}, OutputDir: {OutputDir}, Options: {Options}";
     }
 }
