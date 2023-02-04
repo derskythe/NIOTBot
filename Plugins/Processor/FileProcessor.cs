@@ -114,6 +114,19 @@ public sealed partial class FileProcessor : IPluginProcessor
                         Log.LogWarning("R/W problem with file: {File}", filePath);
                         continue;
                     }
+                    if (fileInfo.Length == 0)
+                    {
+                        Log.LogWarning("File has zero Length: {File}! Just move to output", filePath);
+                        filesToMove.Add(filePath, value.OutputDir);
+                        continue;
+                    }
+                    // File more than 45 Mb
+                    if (fileInfo.Length > 47_185_920)
+                    {
+                        Log.LogWarning("File more than 45 MB! Just move to output. Size: {Size} {File}", fileInfo.Length / 1024 / 1024, filePath);
+                        filesToMove.Add(filePath, value.OutputDir);
+                        continue;
+                    }
 
                     var telegramFile = new TelegramFile(filePath, fileInfo);
                     attached.Add(telegramFile);
@@ -127,7 +140,7 @@ public sealed partial class FileProcessor : IPluginProcessor
                                    value.Extensions.GetStringFromArraySingleLine());
                     continue;
                 }
-                
+
                 var message = new OutgoingMessage(UsersPermissions.Read,
                                                   attached,
                                                   sampleFile.Type,
@@ -173,7 +186,7 @@ public sealed partial class FileProcessor : IPluginProcessor
                                                               response) :
                                    new ProcessorResponseValue(response));
     }
-    
+
     private static bool IsFileLocked(FileInfo file)
     {
         try
