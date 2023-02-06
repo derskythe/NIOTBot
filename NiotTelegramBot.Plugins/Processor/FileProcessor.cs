@@ -21,7 +21,7 @@ public sealed partial class FileProcessor : IPluginProcessor
     public string Name => nameof(FileProcessor);
 
     /// <inheritdoc />
-    public Emoji Icon { get; set; } = Emoji.Robot;
+    public Emoji Icon { get; set; } = Emoji.CardFileBox;
 
     /// <inheritdoc />
     public string NameForUser { get; set; } = i18n.FileProcessor;
@@ -33,7 +33,7 @@ public sealed partial class FileProcessor : IPluginProcessor
     public bool Enabled { get; set; }
 
     /// <inheritdoc />
-    public SourceProcessors SourceSourceProcessor { get; }
+    public SourceProcessors SourceProcessor { get; }
 
     /// <inheritdoc />
     public int Order { get; set; }
@@ -151,7 +151,7 @@ public sealed partial class FileProcessor : IPluginProcessor
                 var message = new OutgoingMessage(UsersPermissions.Read,
                                                   attached,
                                                   sampleFile.Type,
-                                                  SourceSourceProcessor);
+                                                  SourceProcessor);
                 response.Add(message);
             }
             catch (Exception exp)
@@ -242,7 +242,7 @@ public sealed partial class FileProcessor : IPluginProcessor
         _DataSources = dataSources;
         _ChatUsers = chatUsers;
         _Cache = cache;
-        SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
+        SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Order = settings.Order;
 
         var fileTypes = new Dictionary<MessageType, FileProcessorSettings>();

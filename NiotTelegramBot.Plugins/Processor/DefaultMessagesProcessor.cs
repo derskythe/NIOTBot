@@ -24,7 +24,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
     public TelegramMenu[] Menu { get; set; } = Array.Empty<TelegramMenu>();
 
     /// <inheritdoc />
-    public SourceProcessors SourceSourceProcessor { get; }
+    public SourceProcessors SourceProcessor { get; }
 
     /// <inheritdoc />
     public bool Enabled { get; set; }
@@ -75,7 +75,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                                                                     new OutgoingMessage(
                                                                                      chatId,
                                                                                      Emoji.Robot.MessageCombine(i18n.MessageSelectMenu),
-                                                                                     SourceSourceProcessor)
+                                                                                     SourceProcessor)
                                                                                    )
                                       );
             }
@@ -105,7 +105,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                                                             new OutgoingMessage(
                                                                              incomingMessage.Chat.Id,
                                                                              Emoji.Robot.MessageCombine(i18n.MessageSelectMenu),
-                                                                             SourceSourceProcessor)
+                                                                             SourceProcessor)
                                                                            )
                               );
     }
@@ -124,7 +124,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
         _ChatUsers = chatUsers;
         
         Log = loggerFactory.CreateLogger<DefaultMessagesProcessor>();
-        SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
+        SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Enabled = true;
         Order = settings.Order;
 

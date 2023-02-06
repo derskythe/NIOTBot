@@ -32,7 +32,7 @@ public sealed class DummyProcessor : IPluginProcessor
     public bool Enabled { get; set; } = true;
 
     /// <inheritdoc />
-    public SourceProcessors SourceSourceProcessor { get; }
+    public SourceProcessors SourceProcessor { get; }
 
     /// <inheritdoc />
     public int Order { get; set; }
@@ -66,7 +66,7 @@ public sealed class DummyProcessor : IPluginProcessor
         CancellationToken cancellationToken)
     {
         Log = loggerFactory.CreateLogger<DummyProcessor>();
-        SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
+        SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Order = settings.Order;
 
         Log.LogInformation("Status: {Status}", Enabled ? Constants.STARTED : Constants.STAY_SLEPPING);

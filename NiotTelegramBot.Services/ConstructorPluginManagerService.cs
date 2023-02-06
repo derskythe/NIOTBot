@@ -9,7 +9,6 @@ using NiotTelegramBot.ModelzAndUtils.Interfaces;
 using NiotTelegramBot.ModelzAndUtils.Models;
 using NiotTelegramBot.ModelzAndUtils.Settings;
 using NiotTelegramBot.Plugins.Processor;
-using Plugins.Processor;
 using Telegram.Bot.Types.Enums;
 
 namespace NiotTelegramBot.Services;
@@ -133,20 +132,20 @@ public partial class PluginManagerService
                                                                assembly,
                                                                _Cts.Token)
                     },
-                    {
-                        nameof(FileProcessor), CreateProcessor(loggerFactory,
-                                                               new ProcessorSettings()
-                                                               {
-                                                                   Enabled = true,
-                                                                   Name = nameof(FileProcessor)
-                                                               },
-                                                               _PluginDataSource,
-                                                               _ChatUsers,
-                                                               cacheService,
-                                                               existInput,
-                                                               assembly,
-                                                               _Cts.Token)
-                    },
+                    // {
+                    //     nameof(FileProcessor), CreateProcessor(loggerFactory,
+                    //                                            new ProcessorSettings()
+                    //                                            {
+                    //                                                Enabled = true,
+                    //                                                Name = nameof(FileProcessor)
+                    //                                            },
+                    //                                            _PluginDataSource,
+                    //                                            _ChatUsers,
+                    //                                            cacheService,
+                    //                                            existInput,
+                    //                                            assembly,
+                    //                                            _Cts.Token)
+                    // },
                     {
                         nameof(DefaultMessagesProcessor), CreateProcessor(loggerFactory,
                                                                           new ProcessorSettings()
@@ -169,69 +168,102 @@ public partial class PluginManagerService
         {
             _PluginProcessor = new Lazy<IReadOnlyDictionary<string, IPluginProcessor>>(() =>
             {
-                var list = processorsConfig.ToDictionary(processor => processor.Name,
-                                                         processor => CreateProcessor(loggerFactory,
-                                                                                      processor,
-                                                                                      _PluginDataSource,
-                                                                                      _ChatUsers,
-                                                                                      cacheService,
-                                                                                      existInput,
-                                                                                      assembly,
-                                                                                      _Cts.Token));
+                var list = new Dictionary<string, IPluginProcessor>(processorsConfig.Count + 2);
+                foreach (var processor in processorsConfig)
+                {
+                    if (string.IsNullOrEmpty(processor.Name))
+                    {
+                        Log.LogError("Invalid empty name for processor! Ignoring");
+                        continue;
+                    }
+                    var name = processor.Name.EndsWith("Processor") ?
+                                   processor.Name :
+                                   processor.Name + "Processor";
 
-                list.Add(nameof(DefaultMessagesProcessor),
-                         CreateProcessor(loggerFactory,
-                                         new ProcessorSettings()
-                                         {
-                                             Enabled = true,
-                                             Name = nameof(DefaultMessagesProcessor)
-                                         },
-                                         _PluginDataSource,
-                                         _ChatUsers,
-                                         cacheService,
-                                         existInput,
-                                         assembly,
-                                         _Cts.Token)
-                        );
-                list.Add(nameof(RuntimeErrorProcessor),
-                         CreateProcessor(loggerFactory,
-                                         new ProcessorSettings()
-                                         {
-                                             Enabled = true,
-                                             Name = nameof(RuntimeErrorProcessor)
-                                         },
-                                         _PluginDataSource,
-                                         _ChatUsers,
-                                         cacheService,
-                                         existInput,
-                                         assembly,
-                                         _Cts.Token)
-                        );
+                    if (list.ContainsKey(name))
+                    {
+                        Log.LogWarning("Second processor with same name: {Name}, ignoring", processor.Name);
+                        continue;
+                    }
+                    
+                    list.Add(name, CreateProcessor(loggerFactory,
+                                                   processor,
+                                                   _PluginDataSource,
+                                                   _ChatUsers,
+                                                   cacheService,
+                                                   existInput,
+                                                   assembly,
+                                                   _Cts.Token));
+                }
 
+                if (!list.ContainsKey(nameof(RuntimeErrorProcessor)))
+                {
+                    list.Add(nameof(RuntimeErrorProcessor),
+                             CreateProcessor(loggerFactory,
+                                             new ProcessorSettings()
+                                             {
+                                                 Enabled = true,
+                                                 Name = nameof(RuntimeErrorProcessor)
+                                             },
+                                             _PluginDataSource,
+                                             _ChatUsers,
+                                             cacheService,
+                                             existInput,
+                                             assembly,
+                                             _Cts.Token)
+                            );
+                }
+
+                if (!list.ContainsKey(nameof(DefaultMessagesProcessor)))
+                {
+                    list.Add(nameof(DefaultMessagesProcessor),
+                             CreateProcessor(loggerFactory,
+                                             new ProcessorSettings()
+                                             {
+                                                 Enabled = true,
+                                                 Name = nameof(DefaultMessagesProcessor)
+                                             },
+                                             _PluginDataSource,
+                                             _ChatUsers,
+                                             cacheService,
+                                             existInput,
+                                             assembly,
+                                             _Cts.Token)
+                            );
+                }
                 return list;
             });
         }
 
         _MenuRoot = new Lazy<IReadOnlyList<TelegramMenu>>(() =>
         {
-            var list = new List<TelegramMenu>();
+            var dictionary = new Dictionary<string, TelegramMenu>();
 
             foreach (var (key, processor) in _PluginProcessor.Value)
             {
                 if (!processor.Enabled ||
-                    processor.SourceSourceProcessor is SourceProcessors.None or SourceProcessors.DummyProcessor)
+                    processor.Menu.Length == 0 ||
+                    processor.SourceProcessor is SourceProcessors.None or SourceProcessors.DummyProcessor)
                 {
                     continue;
                 }
 
-                list.Add(new TelegramMenu(processor.Icon,
-                                          processor.NameForUser,
-                                          key,
-                                          processor.Order,
-                                          processor.SourceSourceProcessor));
+                var keyName = processor.Icon + processor.NameForUser;
+                if (!dictionary.ContainsKey(keyName))
+                {
+                    dictionary.Add(keyName,
+                                   new TelegramMenu(processor.Icon,
+                                                    processor.NameForUser,
+                                                    key,
+                                                    processor.Order,
+                                                    processor.SourceProcessor));
+                }
             }
 
-            var orderedList = list.OrderBy(i => i.Order).ToArray();
+            var list = dictionary
+                       .Select(c=>c.Value)
+                       .OrderBy(i=> i.Order);
+            var orderedList = list.ToArray();
             Log.LogInformation("Root Menu:\n{Menu}",
                                orderedList.GetStringFromArray());
             return orderedList;
@@ -252,12 +284,21 @@ public partial class PluginManagerService
         {
             Log.LogWarning("Empty name of processor!");
             return new DummyProcessor(loggerFactory,
-                                      settings,
+                                      new ProcessorSettings()
+                                      {
+                                          Name = Guid.NewGuid().ToString(),
+                                          Enabled = false
+                                      },
                                       dataSources,
                                       chatUsers,
                                       cache,
                                       inputSettings,
                                       cancellationToken);
+        }
+
+        if (!settings.Name.EndsWith("Processor"))
+        {
+            settings.Name += "Processor";
         }
 
         // ReSharper disable once CollectionNeverQueried.Local
@@ -306,10 +347,10 @@ public partial class PluginManagerService
                                    instance.Name);
                 }
 
-                if (instance.SourceSourceProcessor.AsString() != settings.Name)
+                if (instance.SourceProcessor.AsString() != settings.Name)
                 {
                     Log.LogWarning("Invalid source processor {SourceProcessor} obtained by Service {Name}",
-                                   instance.SourceSourceProcessor.AsString(),
+                                   instance.SourceProcessor.AsString(),
                                    instance.Name);
                 }
 
@@ -324,9 +365,12 @@ public partial class PluginManagerService
             }
         }
 
-
         return new DummyProcessor(loggerFactory,
-                                  settings,
+                                  new ProcessorSettings()
+                                  {
+                                      Name = settings.Name,
+                                      Enabled = false
+                                  },
                                   dataSources,
                                   chatUsers,
                                   cache,

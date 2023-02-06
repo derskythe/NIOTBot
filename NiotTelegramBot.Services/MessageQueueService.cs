@@ -1,4 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using EnumsNET;
 using Microsoft.Extensions.Logging;
 using NiotTelegramBot.ModelzAndUtils.Interfaces;
 using NiotTelegramBot.ModelzAndUtils.Models;
@@ -26,11 +29,25 @@ public class MessageQueueService : IMessageQueueService
 
     #region OutgoingEnqueue
 
-    public void OutgoingEnqueue(OutgoingMessage message)
+    public void OutgoingEnqueue(
+        OutgoingMessage message,
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0)
     {
         CheckOutgoingQueue();
+#if DEBUG
+        if (string.IsNullOrEmpty(callerMemberName))
+        {
+            callerMemberName = new StackTrace().GetFrame(1)?.GetMethod()?.Name ?? string.Empty;
+        }
+#endif
 
-        Log.LogDebug("Outgoing message: {Message}", message.ToString());
+        Log.LogDebug("Outgoing message: {Message}, Method: {Method}, Path: {Path}, Line: {Line}",
+                     message.ToString(),
+                     callerMemberName,
+                     callerFilePath,
+                     callerLineNumber);
         _OutgoingQueue.Enqueue(message);
     }
 
@@ -47,23 +64,52 @@ public class MessageQueueService : IMessageQueueService
         }
     }
 
-    public void OutgoingEnqueue(List<OutgoingMessage> messagesList)
+    public void OutgoingEnqueue(
+        List<OutgoingMessage> messagesList,
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0)
     {
         CheckOutgoingQueue();
-
+#if DEBUG
+        if (string.IsNullOrEmpty(callerMemberName))
+        {
+            callerMemberName = new StackTrace().GetFrame(1)?.GetMethod()?.Name ?? string.Empty;
+        }
+#endif
         foreach (var message in messagesList)
         {
-            Log.LogDebug("Outgoing message: {Message}", message.ToString());
+            Log.LogDebug("MessageType: {Type}, Text: {TexT}, Method: {Method}, Path: {Path}, Line: {Line}",
+                         message.Type.AsString(),
+                         message.ToString(),
+                         callerMemberName,
+                         callerFilePath,
+                         callerLineNumber);
             _OutgoingQueue.Enqueue(message);
         }
     }
 
-    public OutgoingMessage? OutgoingDequeue()
+    public OutgoingMessage? OutgoingDequeue(
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0)
     {
         if (IsEmptyOutgoingQueue() || !_OutgoingQueue.TryDequeue(out var result))
         {
             return null;
         }
+#if DEBUG
+        if (string.IsNullOrEmpty(callerMemberName))
+        {
+            callerMemberName = new StackTrace().GetFrame(1)?.GetMethod()?.Name ?? string.Empty;
+        }
+#endif
+        Log.LogDebug("MessageType: {Type}, Text: {TexT}, Method: {Method}, Path: {Path}, Line: {Line}",
+                     result.Type.AsString(),
+                     result.Text,
+                     callerMemberName,
+                     callerFilePath,
+                     callerLineNumber);
 
         return result;
     }
@@ -78,8 +124,28 @@ public class MessageQueueService : IMessageQueueService
 
     #region ProcessEnqueue
 
-    public void ProcessEnqueue(MessageProcess message)
+    public void ProcessEnqueue(
+        MessageProcess message,
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0)
     {
+#if DEBUG
+        if (string.IsNullOrEmpty(callerMemberName))
+        {
+            callerMemberName = new StackTrace().GetFrame(1)?.GetMethod()?.Name ?? string.Empty;
+        }
+#endif
+        if (!string.IsNullOrEmpty(callerMemberName))
+        {
+            Log.LogDebug("MessageType: {Type}, Text: {Text}, Method: {Method}, Path: {Path}, Line: {Line}",
+                         message.Type.AsString(),
+                         message.AdditionalInfo,
+                         callerMemberName,
+                         callerFilePath,
+                         callerLineNumber);
+        }
+
         CheckProcessQueue();
         _ProcessQueue.Enqueue(message);
 
@@ -101,14 +167,26 @@ public class MessageQueueService : IMessageQueueService
         }
     }
 
-    public MessageProcess? ProcessDequeue()
+    public MessageProcess? ProcessDequeue(
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0)
     {
         if (IsEmptyProcessQueue() || !_ProcessQueue.TryDequeue(out var result))
         {
             return null;
         }
-
-        Log.LogDebug("Process queue, obtain message: {Message}", result?.ToString());
+#if DEBUG
+        if (string.IsNullOrEmpty(callerMemberName))
+        {
+            callerMemberName = new StackTrace().GetFrame(1)?.GetMethod()?.Name ?? string.Empty;
+        }
+#endif
+        Log.LogDebug("Process queue, obtain message: {Message}, Method: {Method}, Path: {Path}, Line: {Line}",
+                     result.ToString(),
+                     callerMemberName,
+                     callerFilePath,
+                     callerLineNumber);
         return result;
     }
 

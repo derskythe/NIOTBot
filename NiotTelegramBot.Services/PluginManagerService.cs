@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using EnumsNET;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NiotTelegramBot.ModelzAndUtils;
@@ -34,7 +35,7 @@ public partial class PluginManagerService : BackgroundService
                     // Create child cancelation token source to control too slow execution
                     using var childCts = CancellationTokenSource.CreateLinkedTokenSource(_Cts.Token);
                     childCts.CancelAfter(_TimeoutTick);
-                    
+
                     try
                     {
                         if (!processor.Value.Enabled)
@@ -108,7 +109,11 @@ public partial class PluginManagerService : BackgroundService
                     var message = _MessageQueue.ProcessDequeue();
                     if (message != null)
                     {
-                        Log.LogDebug("New message from queue. Type: {Type}", message.Type);
+                        Log.LogDebug("New message from queue. Type: {Type}, AdditionalInfo: {AdditionalInfo}, TelegramType: {TelegramType}, Text: {Text}",
+                                     message.Type.AsString(),
+                                     message.AdditionalInfo,
+                                     message.Update?.Type,
+                                     message.Update?.Message?.Text);
                         message.TryCount++;
                         if (message.IncomingMessageChatId > 0)
                         {
@@ -151,7 +156,6 @@ public partial class PluginManagerService : BackgroundService
                         //     var msgCritical = $"Could not obtain any result for message: {message}";
                         //     Log.LogWarning("{Message}", msgCritical);                
                         // }
-                        // TODO: disable user status "writing"
                     }
                     else
                     {

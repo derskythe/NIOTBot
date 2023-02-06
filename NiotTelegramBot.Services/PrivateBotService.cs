@@ -102,7 +102,7 @@ public partial class BotService
 
             await _ChatUsers.UpdateChatId(username, chatId);
 
-            Log.LogDebug("Received a '{MessageText}' message in chat {ChatId}",
+            Log.LogDebug("Received '{MessageText}' message in chat {ChatId}",
                          MessageType.Text.MessageShort(message.Text),
                          chatId);
             var process = new MessageProcess(chatId, update);
@@ -176,9 +176,9 @@ public partial class BotService
         for (var row = 0; row < keyboardInline.Length; row++)
         {
             var button = buttons[i];
-            if (!button.InlineKeyboard)
+            if (button.InlineKeyboard)
             {
-                Log.LogWarning("Found NOT inline button for text: {Text}",
+                Log.LogWarning("Found inline button for text: {Text}",
                                button.Text);
             }
 

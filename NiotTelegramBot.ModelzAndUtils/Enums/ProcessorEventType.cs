@@ -8,15 +8,15 @@ namespace NiotTelegramBot.ModelzAndUtils.Enums;
 [Serializable]
 public enum ProcessorEventType
 {
-    [EnumMember] Unknown,
-    [EnumMember] Message,
-    [EnumMember] BotStoped,
-    [EnumMember] BotStarted,
-    [EnumMember] Menu,
-    [EnumMember] AddUser,
-    [EnumMember] RemoveUser,
-    [EnumMember] RuntimeError,
-    [EnumMember] Tick,
-    [EnumMember] OrhainedMessage,
-    [EnumMember] NeverBelivied
+    [EnumMember(Value = "Unknown")] Unknown,
+    [EnumMember(Value = "Message")] Message,
+    [EnumMember(Value = "Bot Stoped")] BotStoped,
+    [EnumMember(Value = "Bot started")] BotStarted,
+    [EnumMember(Value = "Menu")] Menu,
+    [EnumMember(Value = "Add user")] AddUser,
+    [EnumMember(Value = "Remove user")] RemoveUser,
+    [EnumMember(Value = "Runtime error")] RuntimeError,
+    [EnumMember(Value = "Tick")] Tick,
+    [EnumMember(Value = "Orhained message")] OrhainedMessage,
+    [EnumMember(Value = "Never belivied")] NeverBelivied
 }

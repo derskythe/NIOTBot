@@ -9,21 +9,10 @@ using NiotTelegramBot.Plugins.Processor.Abstract;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable once CheckNamespace
-namespace Plugins.Processor;
+namespace NiotTelegramBot.Plugins.Processor;
 
-public sealed class RuntimeErrorProcessor : AbstractMessageTypeProcessor
+public sealed class RuntimeErrorProcessor : AbstractMessageTypeProcessor, IPluginProcessor
 {
-    public new string Name => nameof(RuntimeErrorProcessor);
-
-    /// <inheritdoc cref="IPluginProcessor" />
-    public new Emoji Icon { get; set; } = Emoji.Fire;
-
-    /// <inheritdoc cref="IPluginProcessor" />
-    public new string NameForUser { get; set; } = i18n.RuntimeErrorProcessor;
-
-    /// <inheritdoc cref="IPluginProcessor" />
-    public new TelegramMenu[] Menu { get; set; } = Array.Empty<TelegramMenu>();
-
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public RuntimeErrorProcessor(
@@ -39,7 +28,10 @@ public sealed class RuntimeErrorProcessor : AbstractMessageTypeProcessor
         var log = loggerFactory.CreateLogger<RuntimeErrorProcessor>();
 
         // Set values to correct work
-        SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
+        Name = nameof(RuntimeErrorProcessor);
+        NameForUser = i18n.RuntimeErrorProcessor;
+        Icon = Emoji.Fire;
+        SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Permissions = UsersPermissions.System;
         EventType = new[]
         {

@@ -5,6 +5,7 @@ using NiotTelegramBot.ModelzAndUtils.Settings;
 using NiotTelegramBot.Services;
 using NiotTelegramBot.SharedService;
 using NLog;
+using NLog.Fluent;
 using Telegram.Bot;
 
 namespace NiotTelegramBot;
@@ -37,6 +38,12 @@ internal static class Program
         {
             log.LogInitMessage(MicroServiceHost.MicroServiceName);
             await MicroServiceHost.CreateConsoleHost(ConfigureServices, pathAppSettings, args).RunConsoleAsync();
+        }
+        catch (ArgumentException exp)
+        {
+            log.Error("Misconfiguration error: {Message}", exp.Message);
+            Thread.Sleep(1000);
+            throw;
         }
         catch (Exception exp)
         {
@@ -80,6 +87,11 @@ internal static class Program
                 .Bind(sectionBot);
 
         var apiKey = sectionBot.GetValue<string>("Token");
+
+        if (string.IsNullOrEmpty(apiKey) || !apiKey.Contains(':'))
+        {
+            throw new ArgumentException("Invalid token key for Telegram bot, exiting");
+        }
 
         services.AddHttpClient();
         // Services

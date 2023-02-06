@@ -33,7 +33,7 @@ public sealed class EchoProcessor : IPluginProcessor
     public bool Enabled { get; set; } = true;
 
     /// <inheritdoc />
-    public SourceProcessors SourceSourceProcessor { get; }
+    public SourceProcessors SourceProcessor { get; }
 
     /// <inheritdoc />
     public int Order { get; set; }
@@ -84,7 +84,7 @@ public sealed class EchoProcessor : IPluginProcessor
                                                                                 new OutgoingMessage(incomingMessage.Chat.Id,
                                                                                  Emoji.Warning
                                                                                       .MessageCombine(i18n.ErrorInvalidMessage),
-                                                                                 SourceSourceProcessor)
+                                                                                 SourceProcessor)
                                                                                ));
         }
 
@@ -97,7 +97,7 @@ public sealed class EchoProcessor : IPluginProcessor
                                                                             new OutgoingMessage(
                                                                              incomingMessage.Chat.Id,
                                                                              Emoji.Robot.MessageCombine(responseMessage),
-                                                                             SourceSourceProcessor)
+                                                                             SourceProcessor)
                                                                            )
                               );
     }
@@ -119,7 +119,7 @@ public sealed class EchoProcessor : IPluginProcessor
     {
         Log = loggerFactory.CreateLogger<EchoProcessor>();
         _DataSources = dataSources;
-        SourceSourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
+        SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Order = settings.Order;
 
         Log.LogInformation("Status: {Status}",
