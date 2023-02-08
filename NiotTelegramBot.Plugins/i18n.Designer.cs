@@ -150,11 +150,38 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to At your command.
+        /// </summary>
+        public static string InfoAtYourCommand {
+            get {
+                return ResourceManager.GetString("InfoAtYourCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At your service.
+        /// </summary>
+        public static string InfoAtYourService {
+            get {
+                return ResourceManager.GetString("InfoAtYourService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bot status changed: .
         /// </summary>
         public static string InfoBotStatusChanged {
             get {
                 return ResourceManager.GetString("InfoBotStatusChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I come to serve.
+        /// </summary>
+        public static string InfoIcomeToServe {
+            get {
+                return ResourceManager.GetString("InfoIcomeToServe", resourceCulture);
             }
         }
         

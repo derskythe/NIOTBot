@@ -81,4 +81,13 @@
     <data name="ErrorUserNotAuthorized" xml:space="preserve">
         <value>I don't know you, sorry</value>
     </data>
+    <data name="InfoAtYourService" xml:space="preserve">
+        <value>At your service</value>
+    </data>
+    <data name="InfoAtYourCommand" xml:space="preserve">
+        <value>At your command</value>
+    </data>
+    <data name="InfoIcomeToServe" xml:space="preserve">
+        <value>I come to serve</value>
+    </data>
 </root>

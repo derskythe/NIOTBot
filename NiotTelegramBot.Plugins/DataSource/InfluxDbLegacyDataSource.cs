@@ -1,7 +1,4 @@
 ﻿using InfluxDB.Client.Flux;
-using NiotTelegramBot.ModelzAndUtils;
-using NiotTelegramBot.ModelzAndUtils.Interfaces;
-using NiotTelegramBot.ModelzAndUtils.Settings;
 
 namespace NiotTelegramBot.Plugins.DataSource;
 

@@ -1,6 +1,4 @@
-﻿using NiotTelegramBot.ModelzAndUtils;
-
-namespace NiotTelegramBot.Plugins.Processor;
+﻿namespace NiotTelegramBot.Plugins.Processor;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 /// <inheritdoc />

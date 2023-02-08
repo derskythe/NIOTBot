@@ -139,7 +139,7 @@ public partial class BotService
 
     #region Keyboard
 
-    private IReplyMarkup? KeyboardMarkup(OutgoingMessage message)
+    private IReplyMarkup KeyboardMarkup(OutgoingMessage message)
     {
         IReplyMarkup? keyboardMarkup;
         switch (message.Keyboard.Count)
@@ -160,7 +160,7 @@ public partial class BotService
                                                         message.Keyboard);
                 break;
             default:
-                keyboardMarkup = default;
+                keyboardMarkup = new ReplyKeyboardRemove();
                 break;
         }
 

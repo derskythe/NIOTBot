@@ -1,9 +1,4 @@
-﻿using NiotTelegramBot.ModelzAndUtils;
-using NiotTelegramBot.ModelzAndUtils.Enums;
-using NiotTelegramBot.ModelzAndUtils.Interfaces;
-using NiotTelegramBot.ModelzAndUtils.Models;
-using NiotTelegramBot.ModelzAndUtils.Settings;
-using NiotTelegramBot.Plugins.Processor.Abstract;
+﻿using NiotTelegramBot.Plugins.Processor.Abstract;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global

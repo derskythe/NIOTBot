@@ -1,12 +1,6 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
-using NiotTelegramBot.ModelzAndUtils;
-using NiotTelegramBot.ModelzAndUtils.Enums;
-using NiotTelegramBot.ModelzAndUtils.Interfaces;
-using NiotTelegramBot.ModelzAndUtils.Models;
-using NiotTelegramBot.ModelzAndUtils.Settings;
-
 namespace NiotTelegramBot.Plugins.Processor;
 
 // NiotTelegramBot.Plugins.Processor.DefaultMessagesProcessor
@@ -31,11 +25,13 @@ public class DefaultMessagesProcessor : IPluginProcessor
 
     // ReSharper disable once InconsistentNaming
     private readonly ILogger<DefaultMessagesProcessor> Log;
-    
+
     // ReSharper disable once NotAccessedField.Local
     private readonly ICacheService _Cache;
+
     // ReSharper disable once NotAccessedField.Local
     private readonly IChatUsers _ChatUsers;
+    private readonly Random _Random;
 
     /// <inheritdoc />
     public int Order { get; set; }
@@ -74,7 +70,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                        ProcessorResponseValue.SingleOutgoingMessage(
                                                                                     new OutgoingMessage(
                                                                                      chatId,
-                                                                                     Emoji.Robot.MessageCombine(i18n.MessageSelectMenu),
+                                                                                     Emoji.Robot.MessageCombine(GetMessage()),
                                                                                      SourceProcessor)
                                                                                    )
                                       );
@@ -104,7 +100,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                ProcessorResponseValue.SingleOutgoingMessage(
                                                                             new OutgoingMessage(
                                                                              incomingMessage.Chat.Id,
-                                                                             Emoji.Robot.MessageCombine(i18n.MessageSelectMenu),
+                                                                             Emoji.Robot.MessageCombine(GetMessage()),
                                                                              SourceProcessor)
                                                                            )
                               );
@@ -122,12 +118,26 @@ public class DefaultMessagesProcessor : IPluginProcessor
     {
         _Cache = cache;
         _ChatUsers = chatUsers;
-        
+
         Log = loggerFactory.CreateLogger<DefaultMessagesProcessor>();
         SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Enabled = true;
         Order = settings.Order;
 
-        Log.LogInformation("Status: {Status}", Enabled ? Constants.STARTED : Constants.STAY_SLEPPING);
+        Log.LogInformation("Status: {Status}",
+                           Enabled ?
+                               Constants.STARTED :
+                               Constants.STAY_SLEPPING);
+        _Random = new Random((int)DateTime.Now.Ticks);
+    }
+
+    private string GetMessage()
+    {
+        return _Random.Next(0, 2) switch
+        {
+            0 => i18n.InfoAtYourCommand,
+            1 => i18n.InfoAtYourService,
+            _ => i18n.InfoIcomeToServe
+        };
     }
 }
