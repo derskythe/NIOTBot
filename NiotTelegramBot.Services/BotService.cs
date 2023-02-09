@@ -134,7 +134,6 @@ public partial class BotService : BackgroundService
             {
                 await _Bot.SendTextMessageAsync(chatId,
                                                 message.Text,
-                                                ParseMode.MarkdownV2,
                                                 replyToMessageId: message.ReplyMessageId > 0 ? message.ReplyMessageId : null,
                                                 replyMarkup: keyboardMarkup,
                                                 cancellationToken: cancellationToken);

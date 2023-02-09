@@ -15,5 +15,6 @@ public enum SourceProcessors
     [EnumMember] StartStopInfoProcessor,
     [EnumMember] UserAuditProcessor,
     [EnumMember] DefaultMessagesProcessor,
+    [EnumMember] DockerProcessor,
     [EnumMember] InvalidProcessor,
 }

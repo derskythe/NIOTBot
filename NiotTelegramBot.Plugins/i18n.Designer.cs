@@ -69,11 +69,29 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
         public static string DefaultMessagesProcessor {
             get {
                 return ResourceManager.GetString("DefaultMessagesProcessor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Docker.
+        /// </summary>
+        public static string DockerProcessor {
+            get {
+                return ResourceManager.GetString("DockerProcessor", resourceCulture);
             }
         }
         

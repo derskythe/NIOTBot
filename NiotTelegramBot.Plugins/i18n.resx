@@ -90,4 +90,10 @@
     <data name="InfoIcomeToServe" xml:space="preserve">
         <value>I come to serve</value>
     </data>
+    <data name="DockerProcessor" xml:space="preserve">
+        <value>Docker</value>
+    </data>
+    <data name="Back" xml:space="preserve">
+        <value>Back</value>
+    </data>
 </root>

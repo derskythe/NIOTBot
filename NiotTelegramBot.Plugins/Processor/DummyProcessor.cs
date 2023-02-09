@@ -45,6 +45,7 @@ public sealed class DummyProcessor : IPluginProcessor
         return Task.FromResult(new ProcessorResponseValue());
     }
 
+    /// <inheritdoc />
     public Task<ProcessorResponseValue> Tick()
     {
         return Task.FromResult(new ProcessorResponseValue());
