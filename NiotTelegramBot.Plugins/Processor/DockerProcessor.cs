@@ -1,4 +1,5 @@
-﻿using Docker.DotNet;
+﻿using System.Text;
+using Docker.DotNet;
 using Docker.DotNet.Models;
 
 namespace NiotTelegramBot.Plugins.Processor;
@@ -67,7 +68,8 @@ public class DockerProcessor : IPluginProcessor
         }
 
         var cache = _Cache.GetStringCache(CacheKeys.LatestAction);
-        if (!string.IsNullOrEmpty(incomingMessage.Text) && !incomingMessage.Text.StartsWith(IconString) &&
+        if (!string.IsNullOrEmpty(incomingMessage.Text) &&
+            !incomingMessage.Text.StartsWith(IconString) &&
             !cache.ExistsInCache)
         {
             return new ProcessorResponseValue();
@@ -78,7 +80,7 @@ public class DockerProcessor : IPluginProcessor
         {
             Log.LogWarning("User is null for chatID: {ChatID}, Chat username: {Username}",
                            incomingMessage.Chat.Id,
-                           incomingMessage.Chat.Username); 
+                           incomingMessage.Chat.Username);
             return new ProcessorResponseValue();
         }
 
@@ -117,15 +119,19 @@ public class DockerProcessor : IPluginProcessor
             var keyboard = new List<TelegramButton>();
             foreach (var container in containerList)
             {
-                var text = $"{container.Names.GetStringFromArray()} {container.State} {container.Status}";
-                keyboard.Add(new TelegramButton(text, $"{container.ID}"));
+                var name = container.Names.GetStringFromArray();
+                name = name.StartsWith('/') ? name[1..] : name;
+                var id = container.ID.GetHashCode();
+                var text = $"{name} {ConvertStatus(container.State)} {container.Status}";
+                keyboard.Add(new TelegramButton(text, $"{id}"));
             }
 
             var outgoingMessage = new OutgoingMessage(chatId, $"Version: {version.Version}", SourceProcessor, messageId)
             {
                 Keyboard = keyboard,
-                InlineKeyboardPrefix = $"{IconString};{chatId}",
-                IsKeyboardInline = true                
+                InlineKeyboardPrefix = string.Empty, //$"{IconString};{chatId}",
+                IsKeyboardInline = true,
+                KeyboardPerRow = 1
             };
 
             return new ProcessorResponseValue(new List<OutgoingMessage>()
@@ -167,15 +173,25 @@ public class DockerProcessor : IPluginProcessor
         Log = loggerFactory.CreateLogger<DockerProcessor>();
         SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Order = settings.Order;
-        
+
         // Docker client
         _DockerClientConfiguration = new DockerClientConfiguration(new Uri(settings.Options));
         _DockerClient = _DockerClientConfiguration.CreateClient();
 
-        Enabled = settings.Enabled;        
+        Enabled = settings.Enabled;
         Log.LogInformation("Status: {Status}",
                            Enabled ?
                                Constants.STARTED :
                                Constants.STAY_SLEPPING);
+    }
+
+    private static string ConvertStatus(string status)
+    {
+        if (status.IsEqual("running"))
+        {
+            return Emoji.PlayButton.GetEmoji() ?? status;
+        }
+
+        return Emoji.StopButton.GetEmoji() ?? status;
     }
 }

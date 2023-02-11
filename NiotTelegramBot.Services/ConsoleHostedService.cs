@@ -73,10 +73,6 @@ public sealed class ConsoleHostedService : IHostedService
                          await Task.Delay(-1, cancellationToken);
                      }
 
-                     _MessageQueueService.ProcessEnqueue(new MessageProcess()
-                     {
-                         Type = ProcessorEventType.BotStoped
-                     });
                      _ApplicationLifetime.StopApplication();
                  },
                  cancellationToken
@@ -100,8 +96,12 @@ public sealed class ConsoleHostedService : IHostedService
     // ReSharper disable once UnusedParameter.Local
     private void OnStopping(CancellationToken cancellationToken)
     {
-        Log.LogInformation("SIGTERM received, waiting for 10 seconds");
-        Thread.Sleep(2_000);
+        Log.LogInformation("SIGTERM received, waiting for 3 seconds");
+        _MessageQueueService.ProcessEnqueue(new MessageProcess()
+        {
+            Type = ProcessorEventType.BotStoped
+        });
+        Thread.Sleep(3_000);
         Log.LogInformation("Termination delay complete, continuing stopping process");
     }
 

@@ -80,40 +80,76 @@ public partial class BotService
             // Only process Message updates: https://core.telegram.org/bots/api#message
             if (update.Message is not { } message)
             {
-                return;
+                if (update.CallbackQuery is not { } callbackQuery)
+                {
+                    return;
+                }
+
+                message = callbackQuery.Message;
+                if (message == null)
+                {
+                    return;
+                }
+                    
+                var chatId = message.Chat.Id;
+                var username = message.Chat.Username ?? string.Empty;
+
+                if (string.IsNullOrEmpty(username) || !_ChatUsers.IsAuthorized(username))
+                {
+                    Log.LogWarning("User not authorized. ChatID: {ChatId}, Username: {Username}",
+                                   chatId,
+                                   username);
+                    var text = Emoji.Robot.MessageCombine(" Bot\n" +
+                                                          $"{Emoji.NoEntry.GetEmoji()} {i18n.ErrorUserNotAuthorized}");
+                    await botClient.SendTextMessageAsync(
+                                                         chatId: chatId,
+                                                         text: text,
+                                                         cancellationToken: cancellationToken);
+                    return;
+                }
+                await _ChatUsers.UpdateChatId(username, chatId);
+                
+                Log.LogDebug("Received '{MessageText}' message in chat {ChatId}",
+                             MessageType.Text.MessageShort(message.Text),
+                             chatId);
+                var process = new MessageProcess(chatId, update);
+                await _ChatUsers.UpdateChatId(username, chatId);
+                _MessageQueue.ProcessEnqueue(process);
             }
-
-            var chatId = message.Chat.Id;
-            var username = message.Chat.Username ?? string.Empty;
-
-            if (string.IsNullOrEmpty(username) || !_ChatUsers.IsAuthorized(username))
+            else
             {
-                Log.LogWarning("User not authorized. ChatID: {ChatId}, Username: {Username}",
-                               chatId,
-                               username);
-                var text = Emoji.Robot.MessageCombine(" Bot\n" +
-                                                      $"{Emoji.NoEntry.GetEmoji()} {i18n.ErrorUserNotAuthorized}");
-                await botClient.SendTextMessageAsync(
-                                                     chatId: chatId,
-                                                     text: text,
-                                                     cancellationToken: cancellationToken);
-                return;
+                var chatId = message.Chat.Id;
+                var username = message.Chat.Username ?? string.Empty;
+
+                if (string.IsNullOrEmpty(username) || !_ChatUsers.IsAuthorized(username))
+                {
+                    Log.LogWarning("User not authorized. ChatID: {ChatId}, Username: {Username}",
+                                   chatId,
+                                   username);
+                    var text = Emoji.Robot.MessageCombine(" Bot\n" +
+                                                          $"{Emoji.NoEntry.GetEmoji()} {i18n.ErrorUserNotAuthorized}");
+                    await botClient.SendTextMessageAsync(
+                                                         chatId: chatId,
+                                                         text: text,
+                                                         cancellationToken: cancellationToken);
+                    return;
+                }
+
+                await _ChatUsers.UpdateChatId(username, chatId);
+
+                Log.LogDebug("Received '{MessageText}' message in chat {ChatId}",
+                             MessageType.Text.MessageShort(message.Text),
+                             chatId);
+                var process = new MessageProcess(chatId, update);
+                await _ChatUsers.UpdateChatId(username, chatId);
+                _MessageQueue.ProcessEnqueue(process);
+                //
+                // // Echo received message text
+                // Message sentMessage = await botClient.SendTextMessageAsync(
+                //                                                            chatId: chatId,
+                //                                                            text: "You said:\n" + messageText,
+                //                                                            cancellationToken: cancellationToken);
             }
-
-            await _ChatUsers.UpdateChatId(username, chatId);
-
-            Log.LogDebug("Received '{MessageText}' message in chat {ChatId}",
-                         MessageType.Text.MessageShort(message.Text),
-                         chatId);
-            var process = new MessageProcess(chatId, update);
-            await _ChatUsers.UpdateChatId(username, chatId);
-            _MessageQueue.ProcessEnqueue(process);
-            //
-            // // Echo received message text
-            // Message sentMessage = await botClient.SendTextMessageAsync(
-            //                                                            chatId: chatId,
-            //                                                            text: "You said:\n" + messageText,
-            //                                                            cancellationToken: cancellationToken);
         }
         catch (Exception exp)
         {
@@ -154,10 +190,16 @@ public partial class BotService
                     throw new ArgumentException("ChatId cannot be 0 when inline keyboard added");
                 }
 
-                keyboardMarkup = FormatInlineSingleLine(message.ChatId,
-                                                        message.SourceProcessor.AsString(),
-                                                        message.InlineKeyboardPrefix,
-                                                        message.Keyboard);
+                keyboardMarkup = message.KeyboardPerRow == -1 ?
+                                     FormatInlineSingleLine(message.ChatId,
+                                                            message.SourceProcessor.AsString(),
+                                                            message.InlineKeyboardPrefix,
+                                                            message.Keyboard) :
+                                     FormatInlineColumns(message.ChatId,
+                                                         message.SourceProcessor.AsString(),
+                                                         message.InlineKeyboardPrefix,
+                                                         message.Keyboard,
+                                                         message.KeyboardPerRow);
                 break;
             default:
                 keyboardMarkup = new ReplyKeyboardRemove();
@@ -253,6 +295,88 @@ public partial class BotService
 
         var keyboardInline = new InlineKeyboardButton[1][];
         keyboardInline[0] = inlineButton;
+
+        return new InlineKeyboardMarkup(keyboardInline);
+    }
+
+    private InlineKeyboardMarkup FormatInlineColumns(
+        long chatId,
+        string type,
+        string subType,
+        IReadOnlyList<TelegramButton> buttons,
+        int perRow)
+    {
+        var prefix = $"{type};{chatId};{subType};";
+        var rowNum = Convert.ToInt32(Math.Ceiling(buttons.Count / (decimal)perRow));
+        var keyboardInline = new InlineKeyboardButton[rowNum][];
+
+        var i = 0;
+        for (var row = 0; row < keyboardInline.Length; row++)
+        {
+            // if (!button.InlineKeyboard)
+            // {
+            //     Log.LogWarning("Found NOT inline button for text: {Text}, ChatID: {ChatID}, Type: {Type}, Sub: {Sub}",
+            //                    button.Text,
+            //                    chatId,
+            //                    type,
+            //                    subType);
+            // }
+            var keyboardButtons = new List<InlineKeyboardButton>(perRow);
+            for (var column = 0; column < perRow; column++)
+            {
+                if (i + 1 <= buttons.Count)
+                {
+                    var button = buttons[i + column];
+                    keyboardButtons.Add(
+                                        InlineKeyboardButton.WithCallbackData(button.Text, prefix + button.CallbackData)
+                                       );
+                }
+                else
+                {
+                    break;
+                }
+
+                i++;
+            }
+
+            keyboardInline[row] = keyboardButtons.ToArray();
+            // if (i + 1 < buttons.Count)
+            // {
+            //     var button = buttons[i];
+            //     
+            //     var keyboardButtons = new InlineKeyboardButton[2];
+            //     keyboardButtons[0] = new InlineKeyboardButton(button.Text)
+            //     {
+            //         Text = button.Text,
+            //         CallbackData = prefix + button.CallbackData
+            //     };
+            //     i++;
+            //     button = buttons[i];
+            //     keyboardButtons[1] = new InlineKeyboardButton(button.Text)
+            //     {
+            //         Text = button.Text,
+            //         CallbackData = prefix + button.CallbackData
+            //     };
+            //     keyboardInline[row] = keyboardButtons;
+            // }
+            // else if (i + 1 == buttons.Count)
+            // {
+            //     var button = buttons[i];
+            //     
+            //     var keyboardButtons = new InlineKeyboardButton[1];
+            //     keyboardButtons[0] = new InlineKeyboardButton(button.Text)
+            //     {
+            //         Text = button.Text,
+            //         CallbackData = prefix + button.CallbackData
+            //     };
+            //     keyboardInline[row] = keyboardButtons;
+            // }
+            // else
+            // {
+            //     break;
+            // }
+            // i++;
+        }
 
         return new InlineKeyboardMarkup(keyboardInline);
     }

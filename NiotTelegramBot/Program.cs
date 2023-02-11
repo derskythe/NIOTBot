@@ -5,7 +5,6 @@ using NiotTelegramBot.ModelzAndUtils.Settings;
 using NiotTelegramBot.Services;
 using NiotTelegramBot.SharedService;
 using NLog;
-using NLog.Fluent;
 using Telegram.Bot;
 
 namespace NiotTelegramBot;

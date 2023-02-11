@@ -29,6 +29,8 @@ public class OutgoingMessage
 
     public string InlineKeyboardPrefix { get; set; } = string.Empty;
 
+    public int KeyboardPerRow { get; set; } = -1;
+
     public OutgoingMessage(
         OutgoingMessageType type,
         UsersPermissions allowedReceivers,
