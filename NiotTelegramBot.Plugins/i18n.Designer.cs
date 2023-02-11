@@ -132,6 +132,15 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid container.
+        /// </summary>
+        public static string ErrorInvalidContainer {
+            get {
+                return ResourceManager.GetString("ErrorInvalidContainer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid message received.
         /// </summary>
         public static string ErrorInvalidMessage {
@@ -195,11 +204,83 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command.
+        /// </summary>
+        public static string InfoCommand {
+            get {
+                return ResourceManager.GetString("InfoCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created.
+        /// </summary>
+        public static string InfoCreated {
+            get {
+                return ResourceManager.GetString("InfoCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string InfoDelete {
+            get {
+                return ResourceManager.GetString("InfoDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I come to serve.
         /// </summary>
         public static string InfoIcomeToServe {
             get {
                 return ResourceManager.GetString("InfoIcomeToServe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        public static string InfoImage {
+            get {
+                return ResourceManager.GetString("InfoImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inspect.
+        /// </summary>
+        public static string InfoInspect {
+            get {
+                return ResourceManager.GetString("InfoInspect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logs.
+        /// </summary>
+        public static string InfoLogs {
+            get {
+                return ResourceManager.GetString("InfoLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string InfoName {
+            get {
+                return ResourceManager.GetString("InfoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ports (public:private).
+        /// </summary>
+        public static string InfoPorts {
+            get {
+                return ResourceManager.GetString("InfoPorts", resourceCulture);
             }
         }
         
@@ -213,11 +294,92 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run.
+        /// </summary>
+        public static string InfoRun {
+            get {
+                return ResourceManager.GetString("InfoRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running.
+        /// </summary>
+        public static string InfoRunning {
+            get {
+                return ResourceManager.GetString("InfoRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Started.
+        /// </summary>
+        public static string InfoStarted {
+            get {
+                return ResourceManager.GetString("InfoStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State.
+        /// </summary>
+        public static string InfoState {
+            get {
+                return ResourceManager.GetString("InfoState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stats.
+        /// </summary>
+        public static string InfoStats {
+            get {
+                return ResourceManager.GetString("InfoStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string InfoStop {
+            get {
+                return ResourceManager.GetString("InfoStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stoped.
+        /// </summary>
+        public static string InfoStoped {
+            get {
+                return ResourceManager.GetString("InfoStoped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total.
+        /// </summary>
+        public static string InfoTotal {
+            get {
+                return ResourceManager.GetString("InfoTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User audit message.
         /// </summary>
         public static string InfoUserAudit {
             get {
                 return ResourceManager.GetString("InfoUserAudit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        public static string InfoVersion {
+            get {
+                return ResourceManager.GetString("InfoVersion", resourceCulture);
             }
         }
         

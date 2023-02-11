@@ -96,4 +96,58 @@
     <data name="Back" xml:space="preserve">
         <value>Back</value>
     </data>
+    <data name="ErrorInvalidContainer" xml:space="preserve">
+        <value>Invalid container</value>
+    </data>
+    <data name="InfoVersion" xml:space="preserve">
+        <value>Version</value>
+    </data>
+    <data name="InfoRunning" xml:space="preserve">
+        <value>Running</value>
+    </data>
+    <data name="InfoStoped" xml:space="preserve">
+        <value>Stoped</value>
+    </data>
+    <data name="InfoTotal" xml:space="preserve">
+        <value>Total</value>
+    </data>
+    <data name="InfoCreated" xml:space="preserve">
+        <value>Created</value>
+    </data>
+    <data name="InfoImage" xml:space="preserve">
+        <value>Image</value>
+    </data>
+    <data name="InfoName" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="InfoPorts" xml:space="preserve">
+        <value>Ports (public:private)</value>
+    </data>
+    <data name="InfoStarted" xml:space="preserve">
+        <value>Started</value>
+    </data>
+    <data name="InfoCommand" xml:space="preserve">
+        <value>Command</value>
+    </data>
+    <data name="InfoState" xml:space="preserve">
+        <value>State</value>
+    </data>
+    <data name="InfoRun" xml:space="preserve">
+        <value>Run</value>
+    </data>
+    <data name="InfoStop" xml:space="preserve">
+        <value>Stop</value>
+    </data>
+    <data name="InfoStats" xml:space="preserve">
+        <value>Stats</value>
+    </data>
+    <data name="InfoDelete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="InfoLogs" xml:space="preserve">
+        <value>Logs</value>
+    </data>
+    <data name="InfoInspect" xml:space="preserve">
+        <value>Inspect</value>
+    </data>
 </root>

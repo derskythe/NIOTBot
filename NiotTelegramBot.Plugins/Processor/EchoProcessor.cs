@@ -79,7 +79,8 @@ public sealed class EchoProcessor : IPluginProcessor
                                                                                 new OutgoingMessage(incomingMessage.Chat.Id,
                                                                                  Emoji.Warning
                                                                                       .MessageCombine(i18n.ErrorInvalidMessage),
-                                                                                 SourceProcessor)
+                                                                                 SourceProcessor,
+                                                                                 Icon)
                                                                                ));
         }
 
@@ -92,7 +93,8 @@ public sealed class EchoProcessor : IPluginProcessor
                                                                             new OutgoingMessage(
                                                                              incomingMessage.Chat.Id,
                                                                              Emoji.Robot.MessageCombine(responseMessage),
-                                                                             SourceProcessor)
+                                                                             SourceProcessor,
+                                                                             Icon)
                                                                            )
                               );
     }

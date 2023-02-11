@@ -72,6 +72,31 @@ public static class UtilExtensions
 
         return str.ToString();
     }
+    
+    public static string MessageCombine(this Emoji emoji, bool newLine, params string[] args)
+    {
+        var str = new StringBuilder();
+        var emojiReady = emoji.GetEmoji();
+
+        if (!string.IsNullOrWhiteSpace(emojiReady))
+        {
+            str.Append(emojiReady).Append(' ');
+        }
+
+        foreach (var value in args)
+        {
+            if (newLine)
+            {
+                str.AppendLine(value);
+            }
+            else
+            {
+                str.Append(value).Append(' ');
+            }
+        }
+
+        return str.ToString();
+    }
 
     public static string[] SplitFileTypes(this string? fileTypesOption)
     {

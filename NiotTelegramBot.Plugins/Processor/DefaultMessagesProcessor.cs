@@ -53,11 +53,11 @@ public class DefaultMessagesProcessor : IPluginProcessor
     {
         // TODO: change to getting more things
         // In first run we don't know which processor can answer        
-        if (!Enabled || !message.IsOrphained || message.Update == null)
+        if (!Enabled || !message.IsOrphained || message.Update == null || message.Update.Type != UpdateType.Message)
         {
             return Task.FromResult(new ProcessorResponseValue());
         }
-
+        
         if (message.Update.Message is not { } incomingMessage)
         {
             Log.LogInformation("Invalid message type received: {MessageType}",
@@ -71,7 +71,8 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                                                                     new OutgoingMessage(
                                                                                      chatId,
                                                                                      Emoji.Robot.MessageCombine(GetMessage()),
-                                                                                     SourceProcessor)
+                                                                                     SourceProcessor,
+                                                                                     Icon)
                                                                                    )
                                       );
             }
@@ -101,7 +102,8 @@ public class DefaultMessagesProcessor : IPluginProcessor
                                                                             new OutgoingMessage(
                                                                              incomingMessage.Chat.Id,
                                                                              Emoji.Robot.MessageCombine(GetMessage()),
-                                                                             SourceProcessor)
+                                                                             SourceProcessor,
+                                                                             Icon)
                                                                            )
                               );
     }

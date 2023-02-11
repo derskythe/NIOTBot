@@ -83,7 +83,8 @@ public abstract class AbstractMessageTypeProcessor
                                                                               user.ChatId,
                                                                               OutgoingMessageType.Text,
                                                                               buildedText,
-                                                                              SourceProcessor)
+                                                                              SourceProcessor,
+                                                                              Icon)
                                                  )
                                           .ToList();
 

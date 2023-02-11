@@ -192,10 +192,12 @@ public partial class BotService
 
                 keyboardMarkup = message.KeyboardPerRow == -1 ?
                                      FormatInlineSingleLine(message.ChatId,
+                                                            message.SourceProcessorIcon.AsString(EnumFormat.DisplayName) ??
                                                             message.SourceProcessor.AsString(),
                                                             message.InlineKeyboardPrefix,
                                                             message.Keyboard) :
                                      FormatInlineColumns(message.ChatId,
+                                                         message.SourceProcessorIcon.AsString(EnumFormat.DisplayName) ??
                                                          message.SourceProcessor.AsString(),
                                                          message.InlineKeyboardPrefix,
                                                          message.Keyboard,
@@ -328,7 +330,8 @@ public partial class BotService
                 {
                     var button = buttons[i + column];
                     keyboardButtons.Add(
-                                        InlineKeyboardButton.WithCallbackData(button.Text, prefix + button.CallbackData)
+                                        InlineKeyboardButton.WithCallbackData(button.Text,
+                                                                              prefix + button.CallbackData)
                                        );
                 }
                 else

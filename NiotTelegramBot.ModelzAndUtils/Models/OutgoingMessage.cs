@@ -1,5 +1,6 @@
 ﻿using NiotTelegramBot.ModelzAndUtils.Enums;
 using Telegram.Bot.Types.Enums;
+using Emoji = NiotTelegramBot.ModelzAndUtils.Enums.Emoji;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
@@ -15,6 +16,7 @@ public class OutgoingMessage
     public OutgoingMessageType Type { get; set; }
     public string Text { get; } = string.Empty;
     public SourceProcessors SourceProcessor { get; }
+    public Emoji SourceProcessorIcon { get; }
     public int ReplyMessageId { get; }
     public InputMediaType AttachmentMediaMediaType { get; }
 
@@ -35,11 +37,14 @@ public class OutgoingMessage
         OutgoingMessageType type,
         UsersPermissions allowedReceivers,
         SourceProcessors sourceProcessor,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         Type = type;
         AllowedReceivers = allowedReceivers;
         SourceProcessor = sourceProcessor;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
     }
 
@@ -47,11 +52,13 @@ public class OutgoingMessage
         OutgoingMessageType type,
         string message,
         SourceProcessors sourceProcessor,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         Type = type;
         Text = message;
         SourceProcessor = sourceProcessor;
+        SourceProcessorIcon = sourceProcessorIcon;
         ReplyMessageId = replyMessageId;
     }
 
@@ -60,32 +67,47 @@ public class OutgoingMessage
         OutgoingMessageType type,
         string message,
         SourceProcessors sourceProcessor,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         ChatId = chatId;
         Text = message;
         Type = type;
         SourceProcessor = sourceProcessor;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
     }
 
-    public OutgoingMessage(long chatId, string message, SourceProcessors sourceProcessor,
+    public OutgoingMessage(
+        long chatId,
+        string message,
+        SourceProcessors sourceProcessor,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         ChatId = chatId;
         Text = message;
         Type = OutgoingMessageType.Text;
         SourceProcessor = sourceProcessor;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
     }
 
-    public OutgoingMessage(long chatId, OutgoingMessageType type, SourceProcessors sourceProcessor,
+    public OutgoingMessage(
+        long chatId,
+        OutgoingMessageType type,
+        SourceProcessors sourceProcessor,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         ChatId = chatId;
         Text = string.Empty;
         Type = type;
         SourceProcessor = sourceProcessor;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
     }
 
@@ -94,11 +116,14 @@ public class OutgoingMessage
         IReadOnlyList<TelegramFile> attachment,
         InputMediaType mediaType,
         SourceProcessors sourceProcessors,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         Type = OutgoingMessageType.Attachment;
         AttachmentMediaMediaType = mediaType;
         SourceProcessor = sourceProcessors;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
         Attachment = attachment;
         AllowedReceivers = allowedReceivers;
@@ -109,12 +134,15 @@ public class OutgoingMessage
         IReadOnlyList<TelegramFile> attachment,
         InputMediaType mediaType,
         SourceProcessors sourceProcessors,
+        Emoji sourceProcessorIcon,
         int replyMessageId = 0)
     {
         ChatId = chatId;
         Type = OutgoingMessageType.Attachment;
         AttachmentMediaMediaType = mediaType;
         SourceProcessor = sourceProcessors;
+        SourceProcessorIcon = sourceProcessorIcon;
+
         ReplyMessageId = replyMessageId;
         Attachment = attachment;
     }

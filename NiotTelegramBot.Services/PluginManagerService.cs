@@ -119,13 +119,15 @@ public partial class PluginManagerService : BackgroundService
                         {
                             _MessageQueue.OutgoingEnqueue(new OutgoingMessage(message.IncomingMessageChatId,
                                                                               OutgoingMessageType.Typing,
-                                                                              SourceProcessors.None));
+                                                                              SourceProcessors.None,
+                                                                              Emoji.None));
                         }
                         else
                         {
                             _MessageQueue.OutgoingEnqueue(new OutgoingMessage(OutgoingMessageType.Typing,
                                                                               UsersPermissions.Read,
-                                                                              SourceProcessors.None));
+                                                                              SourceProcessors.None,
+                                                                              Emoji.None));
                         }
 
                         if (!await ExecuteAllProcesses(message, cancellationToken))

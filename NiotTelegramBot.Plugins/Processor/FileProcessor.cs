@@ -146,7 +146,8 @@ public sealed partial class FileProcessor : IPluginProcessor
                 var message = new OutgoingMessage(UsersPermissions.Read,
                                                   attached,
                                                   sampleFile.Type,
-                                                  SourceProcessor);
+                                                  SourceProcessor,
+                                                  Icon);
                 response.Add(message);
             }
             catch (Exception exp)
