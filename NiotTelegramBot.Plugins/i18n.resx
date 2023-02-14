@@ -150,4 +150,10 @@
     <data name="InfoInspect" xml:space="preserve">
         <value>Inspect</value>
     </data>
+    <data name="InfoAwaitingOrders" xml:space="preserve">
+        <value>Awaiting orders</value>
+    </data>
+    <data name="InfoYourOrders" xml:space="preserve">
+        <value>Your orders</value>
+    </data>
 </root>

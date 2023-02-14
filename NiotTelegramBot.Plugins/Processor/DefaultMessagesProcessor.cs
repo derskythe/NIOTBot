@@ -135,10 +135,12 @@ public class DefaultMessagesProcessor : IPluginProcessor
 
     private string GetMessage()
     {
-        return _Random.Next(0, 2) switch
+        return _Random.Next(0, 4) switch
         {
             0 => i18n.InfoAtYourCommand,
             1 => i18n.InfoAtYourService,
+            2 => i18n.InfoAwaitingOrders,
+            3 => i18n.InfoYourOrders,
             _ => i18n.InfoIcomeToServe
         };
     }

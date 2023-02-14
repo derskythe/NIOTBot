@@ -195,6 +195,15 @@ namespace NiotTelegramBot.Plugins {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Awaiting orders.
+        /// </summary>
+        public static string InfoAwaitingOrders {
+            get {
+                return ResourceManager.GetString("InfoAwaitingOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bot status changed: .
         /// </summary>
         public static string InfoBotStatusChanged {
@@ -380,6 +389,15 @@ namespace NiotTelegramBot.Plugins {
         public static string InfoVersion {
             get {
                 return ResourceManager.GetString("InfoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your orders.
+        /// </summary>
+        public static string InfoYourOrders {
+            get {
+                return ResourceManager.GetString("InfoYourOrders", resourceCulture);
             }
         }
         
