@@ -29,7 +29,7 @@ internal static class Program
         var pathAppSettings = Path.Combine(MicroServiceHost.GetCurrentRootPath(), "data", "config", "appsettings.json");
         if (!File.Exists(pathAppSettings))
         {
-            File.Copy(Path.Combine(MicroServiceHost.GetCurrentRootPath(),  "appsettings.json"), pathAppSettings);
+            File.Copy(Path.Combine(MicroServiceHost.GetCurrentRootPath(), "appsettings.json"), pathAppSettings);
         }
 
         var log = LogManager.LoadConfiguration(pathNlogConfig).GetCurrentClassLogger();
@@ -80,7 +80,7 @@ internal static class Program
         var processorSection = configuration.GetSection(PluginProcessorArraySettings.NAME);
         services.AddOptions<List<ProcessorSettings>>()
                 .Bind(processorSection);
-        
+
         var sectionBot = configuration.GetSection(BotSettings.NAME);
         services.AddOptions<BotSettings>()
                 .Bind(sectionBot);

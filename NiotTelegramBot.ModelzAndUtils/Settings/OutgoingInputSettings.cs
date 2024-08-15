@@ -7,7 +7,7 @@ namespace NiotTelegramBot.ModelzAndUtils.Settings;
 public class OutgoingInputSettings
 {
     public const string NAME = "PluginsOutgoingInput";
-    
+
     public string Name { get; set; } = string.Empty;
     public bool Enabled { get; set; }
     public string InputDir { get; set; } = string.Empty;

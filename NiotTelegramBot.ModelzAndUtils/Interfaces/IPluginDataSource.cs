@@ -11,5 +11,5 @@ public interface IPluginDataSource : IDisposable
     public bool Enabled { get; set; }
     public Task<bool> Healthcheck();
     public Task<List<T>> Many<T, TKey, TValue>(string commandText, List<KeyValuePair<TKey, TValue>> parameterList) where T : class;
-    public Task<T> Single<T, TKey, TValue>(string commandText, List<KeyValuePair<TKey, TValue>> parameterList) where T : class;    
+    public Task<T> Single<T, TKey, TValue>(string commandText, List<KeyValuePair<TKey, TValue>> parameterList) where T : class;
 }

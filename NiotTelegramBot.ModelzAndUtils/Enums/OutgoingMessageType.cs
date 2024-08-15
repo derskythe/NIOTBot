@@ -10,6 +10,6 @@ public enum OutgoingMessageType
     [EnumMember] None,
     [EnumMember] Text,
     [EnumMember] Attachment,
-    [EnumMember] Typing,    
-    [EnumMember] EndTyping,    
+    [EnumMember] Typing,
+    [EnumMember] EndTyping,
 }

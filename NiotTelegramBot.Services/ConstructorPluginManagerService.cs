@@ -185,7 +185,7 @@ public partial class PluginManagerService
                         Log.LogWarning("Second processor with same name: {Name}, ignoring", processor.Name);
                         continue;
                     }
-                    
+
                     list.Add(name, CreateProcessor(loggerFactory,
                                                    processor,
                                                    _PluginDataSource,
@@ -261,8 +261,8 @@ public partial class PluginManagerService
             }
 
             var list = dictionary
-                       .Select(c=>c.Value)
-                       .OrderBy(i=> i.Order);
+                       .Select(c => c.Value)
+                       .OrderBy(i => i.Order);
             var orderedList = list.ToArray();
             Log.LogInformation("Root Menu:\n{Menu}",
                                orderedList.GetStringFromArray());

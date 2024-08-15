@@ -71,8 +71,8 @@ public class ChatUserService : IChatUsers
                             result.Add(username,
                                        new TelegramUser()
                                        {
-                                           ChatId = 0, 
-                                           Username = username.ToLowerInvariant(), 
+                                           ChatId = 0,
+                                           Username = username.ToLowerInvariant(),
                                            Permission = UsersPermissions.System
                                        });
                         }

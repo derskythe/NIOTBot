@@ -44,7 +44,7 @@ public class CacheService : ICacheService
             _MemoryCache.Remove(cacheKey);
         }
     }
-    
+
     /// <inheritdoc />
     public void SetStringCache(string value, TimeSpan expiration, CacheKeys key, string username)
     {
@@ -52,13 +52,13 @@ public class CacheService : ICacheService
         RemoveFromCacheIfExistByCacheValue(cacheKey);
         _MemoryCache.Set(cacheKey, value, expiration);
     }
-    
+
     /// <inheritdoc />
     public void SetStringCache(string value, CacheKeys key, string username)
     {
         SetStringCache(value, TimeSpan.FromHours(24), key, username);
     }
-    
+
     /// <inheritdoc />
     public void SetCache<T>(T value, TimeSpan expiration, CacheKeys key, string username)
         where T : class
@@ -67,7 +67,7 @@ public class CacheService : ICacheService
         RemoveFromCacheIfExistByCacheValue(cacheKey);
         _MemoryCache.Set(cacheKey, value, expiration);
     }
-    
+
     /// <inheritdoc />
     public void SetCache<T>(T value, TimeSpan expiration, CacheKeys key)
         where T : class
@@ -145,14 +145,14 @@ public class CacheService : ICacheService
     {
         return GetCacheList<T>(key, string.Empty);
     }
-    
+
     /// <inheritdoc />
     public (bool ExistsInCache, string Value) GetStringCache(CacheKeys key)
     {
         var result = GetStringCache(key, string.Empty);
         return (result.ExistsInCache, result.Value);
     }
-    
+
     /// <inheritdoc />
     public (bool ExistsInCache, string Value) GetStringCache(CacheKeys key, string username)
     {

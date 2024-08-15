@@ -2,13 +2,13 @@
 {
     private Character character;
 
-// Это нужно для инициализации    
+    // Это нужно для инициализации    
     void Start()
     {
         character = FindObjectOfType();
     }
 
-// Update вызывается один раз на кадр    
+    // Update вызывается один раз на кадр    
     void Update()
     {
         if (character.transform.position.x - transform.position.x > 30)

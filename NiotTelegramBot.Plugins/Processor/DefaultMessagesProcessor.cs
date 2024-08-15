@@ -57,7 +57,7 @@ public class DefaultMessagesProcessor : IPluginProcessor
         {
             return Task.FromResult(new ProcessorResponseValue());
         }
-        
+
         if (message.Update.Message is not { } incomingMessage)
         {
             Log.LogInformation("Invalid message type received: {MessageType}",

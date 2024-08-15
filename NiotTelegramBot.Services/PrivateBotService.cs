@@ -16,7 +16,7 @@ namespace NiotTelegramBot.Services;
 
 public partial class BotService
 {
-// ReSharper disable once InconsistentNaming
+    // ReSharper disable once InconsistentNaming
     private readonly ILogger<BotService> Log;
 
     private bool _IsDisposed;
@@ -90,7 +90,7 @@ public partial class BotService
                 {
                     return;
                 }
-                    
+
                 var chatId = message.Chat.Id;
                 var username = message.Chat.Username ?? string.Empty;
 
@@ -108,7 +108,7 @@ public partial class BotService
                     return;
                 }
                 await _ChatUsers.UpdateChatId(username, chatId);
-                
+
                 Log.LogDebug("Received '{MessageText}' message in chat {ChatId}",
                              MessageType.Text.MessageShort(message.Text),
                              chatId);

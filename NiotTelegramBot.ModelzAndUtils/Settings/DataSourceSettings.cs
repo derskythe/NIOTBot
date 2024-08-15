@@ -7,15 +7,15 @@ namespace NiotTelegramBot.ModelzAndUtils.Settings;
 public class DataSourceSettings
 {
     public const string NAME = "PluginsDataSource";
-    
+
     public string Name { get; set; } = string.Empty;
     public bool Enabled { get; set; }
-    public string Hostname { get; set; }= string.Empty;
+    public string Hostname { get; set; } = string.Empty;
     public int Port { get; set; }
-    public string Proto { get; set; }= string.Empty;
-    public string DatabaseName { get; set; }= string.Empty;
-    public string Username { get; set; }= string.Empty;
-    public string Password { get; set; }= string.Empty;
+    public string Proto { get; set; } = string.Empty;
+    public string DatabaseName { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     public int Timeout { get; set; } = -1;
 
     /// <inheritdoc />

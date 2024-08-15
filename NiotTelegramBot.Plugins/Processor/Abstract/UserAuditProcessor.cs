@@ -25,7 +25,7 @@ public sealed class UserAuditProcessor : AbstractMessageTypeProcessor, IPluginPr
         Name = nameof(UserAuditProcessor);
         Icon = Emoji.BustsInSilhouette; // 👥
         NameForUser = i18n.UserAuditProcessor;
-        
+
         // Set values to correct work
         Permissions = UsersPermissions.System;
         SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
