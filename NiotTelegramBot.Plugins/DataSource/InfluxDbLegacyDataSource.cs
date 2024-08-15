@@ -64,7 +64,7 @@ public class InfluxDbLegacyDataSource : IPluginDataSource
         {
             return new List<T>(0);
         }
-        
+
         var flux = $"from(bucket:\"{_Bucket}\") |> {commandText}"; // range(start: 0)
         Log.LogDebug("Request: {Request}", flux);
         return await _Client.QueryAsync<T>(flux, _CancelationToken);

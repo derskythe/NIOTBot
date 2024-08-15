@@ -72,7 +72,7 @@ public static class UtilExtensions
 
         return str.ToString();
     }
-    
+
     public static string MessageCombine(this Emoji emoji, bool newLine, params string[] args)
     {
         var str = new StringBuilder();
@@ -255,7 +255,7 @@ public static class UtilExtensions
                    message[..255] :
                    $"Type: {type.AsString()}";
     }
-    
+
     public static string MessageShort(this string? text)
     {
         return !string.IsNullOrEmpty(text) && text.Length > 255 ?

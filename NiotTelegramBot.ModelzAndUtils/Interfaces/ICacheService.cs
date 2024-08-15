@@ -32,7 +32,7 @@ public interface ICacheService
 
     (bool ExistsInCache, T Value) GetCache<T>(CacheKeys key)
         where T : class, new();
-    
+
     (bool ExistsInCache, IEnumerable<T> Value) GetCacheList<T>(CacheKeys key, string username)
         where T : class;
 
@@ -40,6 +40,6 @@ public interface ICacheService
         where T : class;
 
     public (bool ExistsInCache, string Value) GetStringCache(CacheKeys key);
-    
+
     public (bool ExistsInCache, string Value) GetStringCache(CacheKeys key, string username);
 }

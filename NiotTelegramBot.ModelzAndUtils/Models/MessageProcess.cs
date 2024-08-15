@@ -31,8 +31,8 @@ public class MessageProcess
         AdditionalInfo = string.Empty;
         Type = ProcessorEventType.Message;
         Update = update;
-        
-        IncomingMessageChatId = incomingMessageChatId;        
+
+        IncomingMessageChatId = incomingMessageChatId;
     }
 
     public MessageProcess(ProcessorEventType type, string additionalInfo)

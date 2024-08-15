@@ -20,6 +20,6 @@ public interface IMessageQueueService
     MessageProcess? ProcessDequeue(string callerMemberName = "", string callerFilePath = "", int callerLineNumber = 0);
 
     bool IsEmptyProcessQueue();
-    
+
     bool IsEmptyOutgoingQueue();
 }

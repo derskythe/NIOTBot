@@ -6,7 +6,7 @@
 // ReSharper disable once CheckNamespace
 namespace NiotTelegramBot.Plugins.Processor;
 
-public sealed class StartStopInfoProcessor  : AbstractMessageTypeProcessor, IPluginProcessor
+public sealed class StartStopInfoProcessor : AbstractMessageTypeProcessor, IPluginProcessor
 {
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public StartStopInfoProcessor(
@@ -24,12 +24,12 @@ public sealed class StartStopInfoProcessor  : AbstractMessageTypeProcessor, IPlu
         // Set values to correct work
         Name = nameof(StartStopInfoProcessor);
         Icon = Emoji.Info;
-        
+
         SourceProcessor = Enums.Parse<SourceProcessors>(GetType().Name);
         Permissions = UsersPermissions.System;
         EventType = new[]
         {
-            ProcessorEventType.BotStarted, 
+            ProcessorEventType.BotStarted,
             ProcessorEventType.BotStoped
         };
         MessageTitle = i18n.InfoBotStatusChanged;
