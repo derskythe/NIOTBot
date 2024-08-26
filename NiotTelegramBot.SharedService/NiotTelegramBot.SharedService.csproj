@@ -14,7 +14,7 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
       <PackageReference Include="NLog" Version="5.3.3" />
       <PackageReference Include="NLog.DiagnosticSource" Version="5.2.1" />
-      <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.1" />
+      <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.12" />
       <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     </ItemGroup>
 
