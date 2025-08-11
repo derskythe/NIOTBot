@@ -13,7 +13,7 @@
     <ItemGroup>
         <PackageReference Include="Enums.NET" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.2" />
-        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
         <PackageReference Include="System.Text.Json" Version="9.0.2" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.0" />
         <PackageReference Include="Telegram.Bot" Version="22.3.0" />
