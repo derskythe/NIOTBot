@@ -9,12 +9,12 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
       <PackageReference Include="NLog" Version="6.0.5" />
       <PackageReference Include="NLog.DiagnosticSource" Version="5.2.1" />
-      <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.15" />
+      <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.5" />
       <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.0" />
     </ItemGroup>
 
